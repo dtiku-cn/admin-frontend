@@ -1,32 +1,28 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { ScheduleTask } from '../types';
+import { useTasks } from '../hooks/useApi';
 import { StatusBadge } from '../components/StatusBadge';
 import { TaskControls } from '../components/TaskControls';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { api } from '../api/serverApi';
+import { ScheduleTaskType } from '../types';
 
 export function TaskScheduling() {
   const navigate = useNavigate();
-  const [tasks] = useState<ScheduleTask[]>([
-    {
-      id: 1,
-      version: 1,
-      ty: 'CRON',
-      desc: 'Daily Backup',
-      active: true,
-      context: { schedule: '0 0 * * *' },
-      run_count: 365,
-      instances: { last_run: '2024-03-15T00:00:00Z' },
-      created: '2023-03-15T00:00:00Z',
-      modified: '2024-03-15T00:00:00Z'
-    }
-  ]);
+  const { data: tasks, loading, error, refetch } = useTasks();
 
-  const handleToggleActive = (taskId: number) => {
-    // Implementation for toggling task active state
-  };
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
 
-  const handleRefresh = (taskId: number) => {
-    // Implementation for refreshing task
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error.message} />;
+  if (!tasks) return null;
+
+  const handleToggleActive = async (type: ScheduleTaskType) => {
+    await api.toggleTaskActive(type);
+    refetch();
   };
 
   return (
@@ -61,13 +57,15 @@ export function TaskScheduling() {
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.ty}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{task.run_count}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {task.instances.last_run ? new Date(task.instances.last_run).toLocaleString() : 'Never'}
+                  {task.instances[0]?.start_time ? 
+                    new Date(task.instances[0].start_time).toLocaleString() : 
+                    'Never'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                   <TaskControls
                     active={task.active}
-                    onToggleActive={() => handleToggleActive(task.id!)}
-                    onRefresh={() => handleRefresh(task.id!)}
+                    onToggleActive={() => handleToggleActive(task.ty!)}
+                    onRefresh={refetch}
                   />
                 </td>
               </tr>

@@ -28,3 +28,8 @@ export interface SystemConfig {
   created?: string;
   modified?: string;
 }
+
+export interface GetListResult<T> {
+  data: T[],
+  total: number,
+}

@@ -1,34 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Edit2 } from 'lucide-react';
-import type { SystemConfig } from '../types';
+import { useConfigs } from '../hooks/useApi';
 import { Modal } from '../components/Modal';
 import { JsonEditor } from '../components/JsonEditor';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
+import { api } from '../api/serverApi';
+import type { SystemConfig } from '../types';
 
 export function SystemConfiguration() {
-  const [configs] = useState<SystemConfig[]>([
-    {
-      id: 1,
-      version: 1,
-      key: 'EMAIL_SETTINGS',
-      key_desc: 'Email Configuration',
-      value: {
-        smtp_host: 'smtp.example.com',
-        smtp_port: 587,
-        smtp_user: 'user@example.com'
-      },
-      created: '2024-03-15T00:00:00Z',
-      modified: '2024-03-15T00:00:00Z'
-    }
-  ]);
-
+  const { data: configs, loading, error, refetch } = useConfigs();
   const [editingConfig, setEditingConfig] = useState<SystemConfig | null>(null);
   const [jsonValue, setJsonValue] = useState('');
   const [jsonError, setJsonError] = useState<string>();
+
+  useEffect(() => {
+    refetch();
+  }, [refetch]);
+
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error.message} />;
+  if (!configs) return null;
 
   const handleEdit = (config: SystemConfig) => {
     setEditingConfig(config);
     setJsonValue(JSON.stringify(config.value, null, 2));
     setJsonError(undefined);
+  };
+
+  const handleSave = async () => {
+    if (editingConfig && !jsonError) {
+      try {
+        const parsedValue = JSON.parse(jsonValue);
+        await api.updateConfigValue(editingConfig.key!, parsedValue);
+        await refetch();
+        setEditingConfig(null);
+      } catch (e) {
+        setJsonError('Failed to save configuration');
+      }
+    }
   };
 
   const handleJsonChange = (value: string) => {
@@ -91,6 +101,7 @@ export function SystemConfiguration() {
         isOpen={!!editingConfig}
         onClose={() => setEditingConfig(null)}
         title={`Edit ${editingConfig?.key_desc}`}
+        onSave={handleSave}
       >
         <JsonEditor
           value={jsonValue}

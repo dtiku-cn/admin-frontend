@@ -1,5 +1,9 @@
 import React from 'react';
-import Editor from "@monaco-editor/react";
+import * as monaco from 'monaco-editor';
+import Editor, { loader } from "@monaco-editor/react";
+
+// Configure Monaco Editor to use local files
+loader.config({ monaco });
 
 interface JsonEditorProps {
   value: string;
