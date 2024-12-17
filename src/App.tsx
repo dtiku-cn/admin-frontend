@@ -13,8 +13,8 @@ function App() {
         <Route path="/" element={<Layout />}>
           <Route index element={<Navigate to="/tasks" replace />} />
           <Route path="tasks" element={<TaskScheduling />} />
-          <Route path="tasks/:id" element={<TaskDetail />} />
-          <Route path="tasks/:taskId/instances/:instanceId" element={<TaskInstanceDetail />} />
+          <Route path="tasks/:type" element={<TaskDetail />} />
+          <Route path="tasks/:type/instances/:instanceId" element={<TaskInstanceDetail />} />
           <Route path="config" element={<SystemConfiguration />} />
         </Route>
       </Routes>

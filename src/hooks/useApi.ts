@@ -21,10 +21,10 @@ export function useApi<T>(apiCall: () => Promise<T>) {
       const data = await apiCall();
       setState({ data, loading: false, error: null });
     } catch (error) {
-      setState(prev => ({ 
-        ...prev, 
-        loading: false, 
-        error: error instanceof Error ? error : new Error('An error occurred') 
+      setState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error : new Error('An error occurred')
       }));
     }
   }, [apiCall]);
@@ -40,8 +40,8 @@ export function useTasks() {
   return useApi(api.getTasks);
 }
 
-export function useTask(id: number) {
-  return useApi(() => api.getTask(id));
+export function useTask(ty: ScheduleTaskType) {
+  return useApi(() => api.getTask(ty));
 }
 
 export function useTaskInstance(id: string) {

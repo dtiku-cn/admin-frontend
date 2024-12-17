@@ -1,4 +1,4 @@
-export type ScheduleTaskType = 'CRON' | 'INTERVAL' | 'ONE_TIME';
+export type ScheduleTaskType = string;
 
 export interface TaskInstance {
   id: string;

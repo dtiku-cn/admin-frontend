@@ -1,38 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import type { ScheduleTask } from '../types';
+import type { ScheduleTaskType } from '../types';
 import { StatusBadge } from '../components/StatusBadge';
 import { TaskInstanceList } from '../components/TaskInstanceList';
+import { useTask } from '../hooks/useApi';
+import { LoadingSpinner } from '../components/LoadingSpinner';
+import { ErrorMessage } from '../components/ErrorMessage';
 
 export function TaskDetail() {
-  const { id } = useParams();
-  const task: ScheduleTask = {
-    id: 1,
-    version: 1,
-    ty: 'CRON',
-    desc: 'Daily Backup',
-    active: true,
-    context: { schedule: '0 0 * * *' },
-    run_count: 365,
-    instances: [
-      {
-        id: 'inst_1',
-        start_time: '2024-03-15T10:00:00Z',
-        end_time: '2024-03-15T10:01:23Z'
-      },
-      {
-        id: 'inst_2',
-        start_time: '2024-03-15T11:00:00Z',
-        end_time: '2024-03-15T11:01:15Z'
-      },
-      {
-        id: 'inst_3',
-        start_time: '2024-03-15T12:00:00Z'
-      }
-    ],
-    created: '2023-03-15T00:00:00Z',
-    modified: '2024-03-15T00:00:00Z'
-  };
+  const { type } = useParams();
+  console.log("type",type)
+  const { data: task, loading, error,refetch } = useTask(type as ScheduleTaskType);
+
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  console.log("loading",loading)
+  console.log("data",task)
+  if (loading) return <LoadingSpinner />;
+  if (error) return <ErrorMessage message={error.message} />;
+  if (!task) return null;
 
   return (
     <div className="space-y-6">
@@ -40,12 +28,12 @@ export function TaskDetail() {
         <div className="px-6 py-5 border-b border-gray-200">
           <h2 className="text-lg font-medium text-gray-900">Task Details</h2>
         </div>
-        
+
         <div className="px-6 py-5 space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h3 className="text-xl font-medium text-gray-900">{task.desc}</h3>
-              <p className="mt-1 text-sm text-gray-500">ID: {id}</p>
+              <p className="mt-1 text-sm text-gray-500">ID: {task.id}</p>
             </div>
             <StatusBadge active={task.active} />
           </div>

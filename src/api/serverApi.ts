@@ -32,10 +32,9 @@ export const api = {
       .then(json => json.data);
   },
 
-  async getTask(id: number): Promise<ScheduleTask | undefined> {
-    return fetch(`${SERVER_URL}/tasks/${id}`)
-      .then(resp => resp.json())
-      .then(json => json.data);
+  async getTask(ty: ScheduleTaskType): Promise<ScheduleTask> {
+    return fetch(`${SERVER_URL}/tasks/${ty}`)
+      .then(resp => resp.json());
   },
 
   async toggleTaskActive(ty: ScheduleTaskType): Promise<void> {
@@ -66,7 +65,11 @@ export const api = {
   },
 
   async updateConfigValue(key: string, value: any): Promise<void> {
-    return fetch(`${SERVER_URL}/configs/${key}`, { method: "PUT", body: value })
+    return fetch(`${SERVER_URL}/configs/${key}`, {
+      method: "PUT", body: JSON.stringify(value), headers: {
+        "Content-Type": "application/json"
+      }
+    })
       .then(resp => resp.json())
       .then(json => json.data);
   }

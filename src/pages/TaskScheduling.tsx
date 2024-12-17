@@ -46,8 +46,8 @@ export function TaskScheduling() {
           <tbody className="bg-white divide-y divide-gray-200">
             {tasks.map((task) => (
               <tr 
-                key={task.id} 
-                onClick={() => navigate(`/tasks/${task.id}`)}
+                key={task.ty} 
+                onClick={() => navigate(`/tasks/${task.ty}`)}
                 className="cursor-pointer hover:bg-gray-50"
               >
                 <td className="px-6 py-4 whitespace-nowrap">
