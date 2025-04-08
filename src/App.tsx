@@ -1,11 +1,10 @@
 import React from 'react';
-import {Routes, Route, Link, Navigate} from 'react-router-dom';
+import {Link, Navigate, Route, Routes, useLocation} from 'react-router-dom';
 import {Layout, Menu, theme} from 'antd';
-import {SettingOutlined, ScheduleOutlined} from '@ant-design/icons';
+import {ScheduleOutlined, SettingOutlined} from '@ant-design/icons';
 import SystemConfigPage from './pages/SystemConfig';
 import ScheduleTaskPage from './pages/ScheduleTask';
-import {useLocation} from 'react-router-dom';
-
+import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
 
 const {Header, Content, Sider} = Layout;
 
@@ -27,6 +26,7 @@ function App() {
         token: {colorBgContainer, borderRadiusLG},
     } = theme.useToken();
     const location = useLocation();
+    const selectedKey = '/' + location.pathname.split("/").filter(Boolean)[0];
     return (
         <Layout style={{minHeight: '100vh'}}>
             <Header style={{display: 'flex', alignItems: 'center'}}>
@@ -39,7 +39,7 @@ function App() {
                     <Menu
                         mode="inline"
                         defaultSelectedKeys={['/system']}
-                        selectedKeys={[location.pathname]}
+                        selectedKeys={[selectedKey]}
                         style={{height: '100%', borderRight: 0}}
                         items={items}
                     />
@@ -57,6 +57,7 @@ function App() {
                         <Routes>
                             <Route path="/system" element={<SystemConfigPage/>}/>
                             <Route path="/schedule" element={<ScheduleTaskPage/>}/>
+                            <Route path="/schedule/:ty" element={<ScheduleTaskDetail/>}/>
                             <Route path="/" element={<Navigate to="/system" replace/>}/>
                         </Routes>
                     </Content>

@@ -1,5 +1,6 @@
-import React, {useState, useEffect} from 'react';
-import {Table, Button, Modal, Form, Input, Switch, Space, message} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {Button, Form, Input, message, Modal, Space, Switch, Table, Tooltip} from 'antd';
 import type {ScheduleTask} from '../types.ts';
 import {scheduleTaskService} from '../services/api.ts';
 
@@ -8,7 +9,7 @@ const ScheduleTaskPage: React.FC = () => {
     const [total, setTotal] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const [editingId, setEditingId] = useState<number | undefined>();
+    const navigate = useNavigate();
 
     const fetchData = async () => {
         try {
@@ -40,11 +41,9 @@ const ScheduleTaskPage: React.FC = () => {
             title: '类型',
             dataIndex: 'ty',
             key: 'ty',
-        },
-        {
-            title: '描述',
-            dataIndex: 'desc',
-            key: 'desc',
+            render: (ty: string, {desc}: ScheduleTask) => (
+                <Tooltip title={desc}>{ty}</Tooltip>
+            ),
         },
         {
             title: '状态',
@@ -89,9 +88,6 @@ const ScheduleTaskPage: React.FC = () => {
             key: 'action',
             render: (_: any, record: ScheduleTask) => (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
-                        编辑
-                    </Button>
                     <Button
                         type="link"
                         onClick={() => handleToggleActive(record)}
@@ -103,15 +99,9 @@ const ScheduleTaskPage: React.FC = () => {
         },
     ];
 
-    const handleEdit = (record: ScheduleTask) => {
-        setEditingId(record.id || undefined);
-        form.setFieldsValue(record);
-        setIsModalVisible(true);
-    };
-
     const handleToggleActive = async (record: ScheduleTask) => {
         try {
-            await scheduleTaskService.toggleActive(record.id!, !record.active);
+            await scheduleTaskService.toggleActive(record.ty!, !record.active);
             message.success(`${record.active ? '停用' : '启用'}成功`);
             fetchData();
         } catch (error) {
@@ -123,17 +113,13 @@ const ScheduleTaskPage: React.FC = () => {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            if (editingId) {
-                await scheduleTaskService.update({...values, id: editingId});
-            } else {
-                await scheduleTaskService.create(values);
-            }
+            await scheduleTaskService.update({...values});
             setIsModalVisible(false);
-            message.success(`${editingId ? '更新' : '添加'}成功`);
+            message.success('更新成功');
             fetchData();
         } catch (error) {
             console.error('Validate Failed:', error);
-            message.error(`${editingId ? '更新' : '添加'}失败`);
+            message.error('更新失败');
         }
     };
 
@@ -148,10 +134,11 @@ const ScheduleTaskPage: React.FC = () => {
                     showSizeChanger: true,
                     showTotal: (total) => `共 ${total} 条`,
                 }}
+                onRow={(record) => ({onClick: () => navigate(`/schedule/${record.ty}`)})}
             />
 
             <Modal
-                title={editingId ? "编辑任务" : "添加任务"}
+                title="编辑任务"
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={() => setIsModalVisible(false)}

@@ -1,14 +1,15 @@
-import React, {useState, useEffect} from 'react';
-import {Table, Button, Modal, Form, Input, Space, message} from 'antd';
+import React, {useEffect, useState} from 'react';
+import {Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography} from 'antd';
 import type {SystemConfig} from '../types.ts';
 import {systemConfigService} from '../services/api.ts';
+
+const {Paragraph} = Typography;
 
 const SystemConfigPage: React.FC = () => {
     const [data, setData] = useState<SystemConfig[]>([]);
     const [total, setTotal] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
-    const [editingId, setEditingId] = useState<number | undefined>();
 
     const fetchData = async () => {
         try {
@@ -40,17 +41,19 @@ const SystemConfigPage: React.FC = () => {
             title: '配置键',
             dataIndex: 'key',
             key: 'key',
-        },
-        {
-            title: '描述',
-            dataIndex: 'key_desc',
-            key: 'key_desc',
+            render: (key: string, {key_desc}: SystemConfig) => (
+                <Tooltip title={key_desc}>{key}</Tooltip>
+            ),
         },
         {
             title: '值',
             dataIndex: 'value',
             key: 'value',
-            render: (value: any) => value ? JSON.stringify(value) : '-',
+            render: (value: any) => value ? (
+                <Paragraph style={{margin: 0}}>
+                    <pre style={{margin: 0}}>{value}</pre>
+                </Paragraph>
+            ) : '-',
         },
         {
             title: '创建时间',
@@ -78,7 +81,6 @@ const SystemConfigPage: React.FC = () => {
     ];
 
     const handleEdit = (record: SystemConfig) => {
-        setEditingId(record.id || undefined);
         form.setFieldsValue(record);
         setIsModalVisible(true);
     };
@@ -86,17 +88,13 @@ const SystemConfigPage: React.FC = () => {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            if (editingId) {
-                await systemConfigService.update({...values, id: editingId});
-            } else {
-                await systemConfigService.create(values);
-            }
+            await systemConfigService.update({...values});
             setIsModalVisible(false);
-            message.success(`${editingId ? '更新' : '添加'}成功`);
+            message.success("更新成功");
             fetchData();
         } catch (error) {
             console.error('Validate Failed:', error);
-            message.error(`${editingId ? '更新' : '添加'}失败`);
+            message.error('更新失败');
         }
     };
 
@@ -114,7 +112,7 @@ const SystemConfigPage: React.FC = () => {
             />
 
             <Modal
-                title={editingId ? "编辑配置" : "添加配置"}
+                title="编辑配置"
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={() => setIsModalVisible(false)}

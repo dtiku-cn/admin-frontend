@@ -4,7 +4,7 @@ export interface SystemConfig {
   id: number | null;
   version: number;
   key: string;
-  keyDesc: string;
+  key_desc: string;
   value?: any;
   created?: string | null;
   modified?: string | null;
@@ -17,7 +17,7 @@ export interface ScheduleTask {
   desc: string;
   active: boolean;
   context: any;
-  runCount: number;
+  run_count: number;
   instances: any;
   created?: string | null;
   modified?: string | null;
