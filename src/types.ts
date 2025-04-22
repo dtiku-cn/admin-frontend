@@ -29,3 +29,18 @@ export interface MenuItem {
   label: string;
   children?: MenuItem[];
 }
+
+export interface ExamCategory {
+  id: number;
+  name: string;
+  prefix: string;
+  pid: number;
+}
+
+export interface Label {
+  id: number;
+  name: string;
+  pid: number;
+  exam_id: number;
+  paper_type: number;
+}
