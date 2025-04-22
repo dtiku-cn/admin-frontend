@@ -1,6 +1,6 @@
 import type {ScheduleTask, SystemConfig} from '../types.ts';
 
-const API_BASE_URL = 'http://localhost:5174/api';
+const API_BASE_URL = '/api';
 
 interface ApiResponse<T> {
     data: T[];
