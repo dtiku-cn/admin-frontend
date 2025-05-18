@@ -44,3 +44,11 @@ export interface Label {
   exam_id: number;
   paper_type: number;
 }
+
+export interface KeyPoint {
+  id: number;
+  name: string;
+  pid: number;
+  exam_id: number;
+  paper_type: number;
+}

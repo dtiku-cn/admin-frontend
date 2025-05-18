@@ -1,11 +1,10 @@
-import React from 'react';
-import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
-import { ScheduleOutlined, SettingOutlined, AlignLeftOutlined } from '@ant-design/icons';
-import SystemConfigPage from './pages/SystemConfig';
+import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import ExamCategoryTree from './pages/ExamCategoryTree';
 import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
-import ExamCategoryTree from './pages/ExamCategoryTree';
+import SystemConfigPage from './pages/SystemConfig';
 
 const { Header, Content, Sider } = Layout;
 
