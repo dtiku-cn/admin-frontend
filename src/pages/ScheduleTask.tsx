@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Button, Form, Input, message, Modal, Space, Switch, Table, Tooltip} from 'antd';
-import type {ScheduleTask} from '../types.ts';
-import {scheduleTaskService} from '../services/api.ts';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Button, Form, Input, message, Modal, Space, Switch, Table, Tooltip } from 'antd';
+import type { ScheduleTask } from '../types.ts';
+import { scheduleTaskService } from '../services/api.ts';
 
 const ScheduleTaskPage: React.FC = () => {
     const [data, setData] = useState<ScheduleTask[]>([]);
@@ -41,7 +41,7 @@ const ScheduleTaskPage: React.FC = () => {
             title: '类型',
             dataIndex: 'ty',
             key: 'ty',
-            render: (ty: string, {desc}: ScheduleTask) => (
+            render: (ty: string, { desc }: ScheduleTask) => (
                 <Tooltip title={desc}>{ty}</Tooltip>
             ),
         },
@@ -50,7 +50,7 @@ const ScheduleTaskPage: React.FC = () => {
             dataIndex: 'active',
             key: 'active',
             render: (active: boolean) => (
-                <Switch checked={active} disabled/>
+                <Switch checked={active} disabled />
             ),
         },
         {
@@ -90,16 +90,22 @@ const ScheduleTaskPage: React.FC = () => {
                 <Space size="middle">
                     <Button
                         type="link"
-                        onClick={() => handleToggleActive(record)}
+                        onClick={() => handleToggleStart(record)}
                     >
-                        {record.active ? '停用' : '启用'}
+                        {record.active ? '停用' : '重启'}
+                    </Button>
+                    <Button
+                        type="link"
+                        onClick={() => handleToggleContinue(record)}
+                    >
+                        {record.active ? '暂停' : '继续'}
                     </Button>
                 </Space>
             ),
         },
     ];
 
-    const handleToggleActive = async (record: ScheduleTask) => {
+    const handleToggleStart = async (record: ScheduleTask) => {
         try {
             await scheduleTaskService.toggleActive(record.ty!, !record.active);
             message.success(`${record.active ? '停用' : '启用'}成功`);
@@ -110,10 +116,21 @@ const ScheduleTaskPage: React.FC = () => {
         }
     };
 
+    const handleToggleContinue = async (record: ScheduleTask) => {
+        try {
+            await scheduleTaskService.continueTask(record.ty!, !record.active);
+            message.success(`${record.active ? '暂停' : '继续'}成功`);
+            fetchData();
+        } catch (error) {
+            message.error(`${record.active ? '暂停' : '继续'}失败`);
+            console.error('Toggle continue task failed:', error);
+        }
+    };
+
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            await scheduleTaskService.update({...values});
+            await scheduleTaskService.update({ ...values });
             setIsModalVisible(false);
             message.success('更新成功');
             fetchData();
@@ -134,7 +151,7 @@ const ScheduleTaskPage: React.FC = () => {
                     showSizeChanger: true,
                     showTotal: (total) => `共 ${total} 条`,
                 }}
-                onRow={(record) => ({onClick: () => navigate(`/schedule/${record.ty}`)})}
+                onRow={(record) => ({ onClick: () => navigate(`/schedule/${record.ty}`) })}
             />
 
             <Modal
@@ -147,23 +164,23 @@ const ScheduleTaskPage: React.FC = () => {
                     <Form.Item
                         name="ty"
                         label="类型"
-                        rules={[{required: true, message: '请输入任务类型'}]}
+                        rules={[{ required: true, message: '请输入任务类型' }]}
                     >
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item
                         name="desc"
                         label="描述"
-                        rules={[{required: true, message: '请输入描述'}]}
+                        rules={[{ required: true, message: '请输入描述' }]}
                     >
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item
                         name="active"
                         label="状态"
                         valuePropName="checked"
                     >
-                        <Switch/>
+                        <Switch />
                     </Form.Item>
                 </Form>
             </Modal>

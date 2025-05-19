@@ -68,6 +68,17 @@ export const scheduleTaskService = {
         });
         return response.json();
     },
+
+    async continueTask(ty: string, active: boolean): Promise<ScheduleTask> {
+        const response = await fetch(`${API_BASE_URL}/tasks/${ty}/continue`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ active }),
+        });
+        return response.json();
+    },
 };
 
 
