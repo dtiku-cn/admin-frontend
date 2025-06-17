@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography} from 'antd';
-import type {SystemConfig} from '../types.ts';
-import {systemConfigService} from '../services/api.ts';
+import React, { useEffect, useState } from 'react';
+import { Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography } from 'antd';
+import type { SystemConfig } from '../types.ts';
+import { systemConfigService } from '../services/api.ts';
 
-const {Paragraph} = Typography;
+const { Paragraph } = Typography;
 
 const SystemConfigPage: React.FC = () => {
     const [data, setData] = useState<SystemConfig[]>([]);
@@ -41,7 +41,7 @@ const SystemConfigPage: React.FC = () => {
             title: '配置键',
             dataIndex: 'key',
             key: 'key',
-            render: (key: string, {key_desc}: SystemConfig) => (
+            render: (key: string, { key_desc }: SystemConfig) => (
                 <Tooltip title={key_desc}>{key}</Tooltip>
             ),
         },
@@ -49,11 +49,11 @@ const SystemConfigPage: React.FC = () => {
             title: '值',
             dataIndex: 'value',
             key: 'value',
-            render: (value: any) => value ? (
-                <Paragraph style={{margin: 0}}>
-                    <pre style={{margin: 0}}>{value}</pre>
+            render: (value: any) => value === undefined ? '-' : (
+                <Paragraph style={{ margin: 0 }}>
+                    <pre style={{ margin: 0 }}>{value}</pre>
                 </Paragraph>
-            ) : '-',
+            ),
         },
         {
             title: '创建时间',
@@ -88,7 +88,7 @@ const SystemConfigPage: React.FC = () => {
     const handleOk = async () => {
         try {
             const values = await form.validateFields();
-            await systemConfigService.update({...values});
+            await systemConfigService.update({ ...values });
             setIsModalVisible(false);
             message.success("更新成功");
             fetchData();
@@ -121,22 +121,22 @@ const SystemConfigPage: React.FC = () => {
                     <Form.Item
                         name="key"
                         label="配置键"
-                        rules={[{required: true, message: '请输入配置键'}]}
+                        rules={[{ required: true, message: '请输入配置键' }]}
                     >
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item
                         name="key_desc"
                         label="描述"
-                        rules={[{required: true, message: '请输入描述'}]}
+                        rules={[{ required: true, message: '请输入描述' }]}
                     >
-                        <Input disabled/>
+                        <Input disabled />
                     </Form.Item>
                     <Form.Item
                         name="value"
                         label="值"
                     >
-                        <Input.TextArea/>
+                        <Input.TextArea />
                     </Form.Item>
                 </Form>
             </Modal>
