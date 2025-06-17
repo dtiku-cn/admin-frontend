@@ -51,7 +51,7 @@ const SystemConfigPage: React.FC = () => {
             key: 'value',
             render: (value: any) => value === undefined ? '-' : (
                 <Paragraph style={{ margin: 0 }}>
-                    <pre style={{ margin: 0 }}>{value}</pre>
+                    <pre style={{ margin: 0 }}>{JSON.stringify(value)}</pre>
                 </Paragraph>
             ),
         },
