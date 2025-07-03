@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography } from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography, Switch } from 'antd';
+import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
 import type { SystemConfig } from '../types.ts';
 import { systemConfigService } from '../services/api.ts';
 
@@ -26,6 +27,35 @@ const SystemConfigPage: React.FC = () => {
         fetchData();
     }, []);
 
+    const handleEdit = (record: SystemConfig) => {
+        form.setFieldsValue(record);
+        setIsModalVisible(true);
+    };
+
+    const handleOk = async () => {
+        try {
+            const values = await form.validateFields();
+            await systemConfigService.update({ ...values });
+            setIsModalVisible(false);
+            message.success("更新成功");
+            fetchData();
+        } catch (error) {
+            console.error('Validate Failed:', error);
+            message.error('更新失败');
+        }
+    };
+
+    const handleChecked = async (value: SystemConfig) => {
+        try {
+            await systemConfigService.update(value);
+            message.success("更新成功");
+            fetchData();
+        } catch (error) {
+            console.error('Update Failed:', error);
+            message.error('更新失败');
+        }
+    };
+
     const columns = [
         {
             title: 'ID',
@@ -49,7 +79,14 @@ const SystemConfigPage: React.FC = () => {
             title: '值',
             dataIndex: 'value',
             key: 'value',
-            render: (value: any) => value === undefined ? '-' : (
+            render: (value: any, record: SystemConfig) => value === undefined ? '-' : typeof value === 'boolean' ? (
+                <Switch
+                    checkedChildren={<CheckOutlined />}
+                    unCheckedChildren={<CloseOutlined />}
+                    value={value}
+                    onChange={() => handleChecked({ ...record, value })}
+                />
+            ) : (
                 <Paragraph style={{ margin: 0 }}>
                     <pre style={{ margin: 0 }}>{JSON.stringify(value)}</pre>
                 </Paragraph>
@@ -70,7 +107,7 @@ const SystemConfigPage: React.FC = () => {
         {
             title: '操作',
             key: 'action',
-            render: (_: any, record: SystemConfig) => (
+            render: (_: any, record: SystemConfig) => typeof record.value === 'boolean' ? null : (
                 <Space size="middle">
                     <Button type="link" onClick={() => handleEdit(record)}>
                         编辑
@@ -79,24 +116,6 @@ const SystemConfigPage: React.FC = () => {
             ),
         },
     ];
-
-    const handleEdit = (record: SystemConfig) => {
-        form.setFieldsValue(record);
-        setIsModalVisible(true);
-    };
-
-    const handleOk = async () => {
-        try {
-            const values = await form.validateFields();
-            await systemConfigService.update({ ...values });
-            setIsModalVisible(false);
-            message.success("更新成功");
-            fetchData();
-        } catch (error) {
-            console.error('Validate Failed:', error);
-            message.error('更新失败');
-        }
-    };
 
     return (
         <div>
