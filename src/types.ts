@@ -43,6 +43,7 @@ export interface Label {
   pid: number;
   exam_id: number;
   paper_type: number;
+  hidden: boolean;
 }
 
 export interface KeyPoint {

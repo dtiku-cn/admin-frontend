@@ -86,7 +86,8 @@ const ExamCategoryTree: React.FC = () => {
                 examCategoryService.find_label_by_pid(selectedPaperType as number, key).then((resp) => {
                     const children = resp.data.map(exam => ({
                         key: exam.id,
-                        title: exam.name
+                        title: exam.name,
+                        disabled: exam.hidden
                     }) as DataNode);
 
                     setTreeLabelData((origin) =>
