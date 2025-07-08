@@ -84,7 +84,7 @@ const SystemConfigPage: React.FC = () => {
                     checkedChildren={<CheckOutlined />}
                     unCheckedChildren={<CloseOutlined />}
                     value={value}
-                    onChange={() => handleChecked({ ...record, value })}
+                    onChange={(value: boolean) => handleChecked({ ...record, value })}
                 />
             ) : (
                 <Paragraph style={{ margin: 0 }}>
