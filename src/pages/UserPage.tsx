@@ -84,7 +84,7 @@ const UserPage: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: 24 }}>
+        <>
             <Card title="用户增长趋势" style={{ marginBottom: 24 }}>
                 <ReactECharts option={chartOption} style={{ height: 400 }} />
             </Card>
@@ -99,7 +99,7 @@ const UserPage: React.FC = () => {
                     onChange={setPage}
                 />
             </Card>
-        </div>
+        </>
     );
 };
 
