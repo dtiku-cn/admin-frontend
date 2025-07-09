@@ -32,19 +32,19 @@ const UserPage: React.FC = () => {
 
     const columns: ColumnsType<User> = [
         { title: 'ID', dataIndex: 'id' },
-        { title: '姓名', dataIndex: 'name' },
-        { title: '微信ID', dataIndex: 'wechat_id' },
-        {
-            title: '性别',
-            dataIndex: 'gender',
-            render: (g: boolean) => (g ? '男' : '女'),
-        },
         {
             title: '头像',
             dataIndex: 'avatar',
             render: (url: string) => (
                 <img src={url} alt="avatar" style={{ width: 40, height: 40, borderRadius: '50%' }} />
             ),
+        },
+        { title: '姓名', dataIndex: 'name' },
+        { title: '微信ID', dataIndex: 'wechat_id' },
+        {
+            title: '性别',
+            dataIndex: 'gender',
+            render: (g: boolean) => (g ? '男' : '女'),
         },
         {
             title: '注册时间',
