@@ -1,10 +1,11 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
 import { Layout, Menu, theme } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ExamCategoryTree from './pages/ExamCategoryTree';
 import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
 import SystemConfigPage from './pages/SystemConfig';
+import UserPage from './pages/UserPage';
 
 const { Header, Content, Sider } = Layout;
 
@@ -23,6 +24,11 @@ const items = [
         key: '/exam-category',
         icon: <AlignLeftOutlined />,
         label: <Link to="/exam-category">考试类目</Link>,
+    },
+    {
+        key: '/user',
+        icon: <UserOutlined />,
+        label: <Link to="/user">用户管理</Link>,
     },
 ];
 
@@ -64,6 +70,7 @@ function App() {
                             <Route path="/schedule" element={<ScheduleTaskPage />} />
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
+                            <Route path="/user" element={<UserPage />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>
