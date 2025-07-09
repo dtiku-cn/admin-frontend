@@ -46,10 +46,26 @@ export interface Label {
   hidden: boolean;
 }
 
-export interface KeyPoint {
+export interface User {
   id: number;
   name: string;
-  pid: number;
-  exam_id: number;
-  paper_type: number;
+  wechat_id: string;
+  gender: boolean;
+  avatar: string;
+  expired: string;
+  created: string;
+  modified: string;
+}
+
+export interface PageResult<T> {
+  content: T[];
+  size: number;
+  page: number;
+  total_elements: number;
+  total_pages: number;
+}
+
+export interface UserStatsByDay {
+  day: string;
+  count: number;
 }

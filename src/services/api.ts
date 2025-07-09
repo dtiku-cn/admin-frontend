@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, ScheduleTask, SystemConfig } from '../types.ts';
+import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, User, UserStatsByDay } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -96,7 +96,19 @@ export const examCategoryService = {
 
 export const KeyPointService = {
     async find_by_pid(paper_type: number, pid: number = 0): Promise<ApiResponse<KeyPoint>> {
-        const response = await fetch(`${API_BASE_URL}/keypoint/${paper_type}/${pid}`);
-        return response.json();
+        const res = await fetch(`${API_BASE_URL}/keypoint/${paper_type}/${pid}`);
+        return res.json();
+    }
+}
+
+export const UserService = {
+    async fetch_users(page: number, size: number): Promise<PageResult<User>> {
+        const res = await fetch(`${API_BASE_URL}/users?page=${page}&page_size=${size}`);
+        return await res.json();
+    },
+
+    async fetch_user_stats(): Promise<UserStatsByDay[]> {
+        const res = await fetch(`${API_BASE_URL}/user_stats`);
+        return await res.json();
     }
 }
