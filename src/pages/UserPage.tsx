@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import ReactECharts from 'echarts-for-react';
+import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { UserService } from '../services/api';
 import { User, UserQuery } from '../types';
@@ -93,27 +94,35 @@ const UserPage: React.FC = () => {
         ],
     };
 
+    const todayAdd = stats.length > 0 ? stats[stats.length - 1]?.count : 0;
+    const yesterdayAdd = stats.length > 1 ? stats[stats.length - 2]?.count : 0;
+    const fontSize = { fontSize: "1.5em" };
+
     return (
         <>
             <Row gutter={16} style={{ marginBottom: 24 }}>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="用户总数" value={total} />
+                        <Statistic title="用户总数" value={total} valueStyle={fontSize} suffix={`+${todayAdd}`} />
                     </Card>
                 </Col>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="昨日新增用户数" value={stats.length > 0 ? stats[stats.length - 1]?.count : 0} />
+                        <Statistic title="今日新增用户数"
+                            value={todayAdd}
+                            valueStyle={{ color: todayAdd > yesterdayAdd ? "#3f8600" : '#cf1322', ...fontSize }}
+                            prefix={todayAdd > yesterdayAdd ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
+                            suffix={yesterdayAdd} />
                     </Card>
                 </Col>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="已付费用户数" value={0} />
+                        <Statistic title="已付费用户数" value={0} valueStyle={fontSize} />
                     </Card>
                 </Col>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="昨日付费用户数" value={0} />
+                        <Statistic title="昨日付费用户数" value={0} valueStyle={fontSize} />
                     </Card>
                 </Col>
             </Row>
