@@ -52,7 +52,7 @@ function App() {
                         items={items}
                     />
                 </Sider>
-                <Layout style={{ padding: '24px' }}>
+                <Layout style={{ padding: '24px', overflow: "scroll", maxHeight: "100vh" }}>
                     <Content
                         style={{
                             padding: 0,
