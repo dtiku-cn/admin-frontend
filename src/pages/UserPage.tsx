@@ -103,7 +103,7 @@ const UserPage: React.FC = () => {
                 </Col>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="昨日新增用户数" value={stats[stats.length - 1].count} />
+                        <Statistic title="昨日新增用户数" value={stats.length > 0 ? stats[stats.length - 1]?.count : 0} />
                     </Card>
                 </Col>
                 <Col span={6}>
