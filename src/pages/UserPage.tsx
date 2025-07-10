@@ -141,7 +141,7 @@ const UserPage: React.FC = () => {
                         <Col>
                             <Form.Item name="expired" initialValue="">
                                 <Select style={{ width: 120 }}>
-                                    <Select.Option value="">不限</Select.Option>
+                                    <Select.Option value={null}>不限</Select.Option>
                                     <Select.Option value={true}>已过期</Select.Option>
                                     <Select.Option value={false}>未过期</Select.Option>
                                 </Select>
