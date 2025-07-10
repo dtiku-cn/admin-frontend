@@ -1,6 +1,6 @@
 // src/pages/UserPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Switch, Button } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import ReactECharts from 'echarts-for-react';
 import dayjs from 'dayjs';
@@ -48,11 +48,6 @@ const UserPage: React.FC = () => {
         { title: '姓名', dataIndex: 'name' },
         { title: '微信ID', dataIndex: 'wechat_id' },
         {
-            title: '性别',
-            dataIndex: 'gender',
-            render: (g: boolean) => (g ? '男' : '女'),
-        },
-        {
             title: '注册时间',
             dataIndex: 'created',
             render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm'),
@@ -72,7 +67,6 @@ const UserPage: React.FC = () => {
     const onFinish = (values: any) => {
         const parsedQuery: UserQuery = {
             name: values.name || undefined,
-            gender: values.gender !== 'all' ? values.gender : undefined,
             expired: values.expired ?? undefined,
         };
         setPage(1); // 重置到第一页
@@ -101,6 +95,28 @@ const UserPage: React.FC = () => {
 
     return (
         <>
+            <Row gutter={16} style={{ marginBottom: 24 }}>
+                <Col span={6}>
+                    <Card>
+                        <Statistic title="用户总数" value={total} />
+                    </Card>
+                </Col>
+                <Col span={6}>
+                    <Card>
+                        <Statistic title="昨日新增用户数" value={stats[stats.length - 1].count} />
+                    </Card>
+                </Col>
+                <Col span={6}>
+                    <Card>
+                        <Statistic title="已付费用户数" value={0} />
+                    </Card>
+                </Col>
+                <Col span={6}>
+                    <Card>
+                        <Statistic title="昨日付费用户数" value={0} />
+                    </Card>
+                </Col>
+            </Row>
             <Card title="用户增长趋势" style={{ marginBottom: 24 }}>
                 <ReactECharts option={chartOption} style={{ height: 400 }} />
             </Card>
@@ -114,17 +130,12 @@ const UserPage: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col>
-                            <Form.Item name="gender" initialValue="all">
+                            <Form.Item name="expired" initialValue="">
                                 <Select style={{ width: 120 }}>
-                                    <Select.Option value="all">性别不限</Select.Option>
-                                    <Select.Option value={true}>男</Select.Option>
-                                    <Select.Option value={false}>女</Select.Option>
+                                    <Select.Option value="">不限</Select.Option>
+                                    <Select.Option value={true}>已过期</Select.Option>
+                                    <Select.Option value={false}>未过期</Select.Option>
                                 </Select>
-                            </Form.Item>
-                        </Col>
-                        <Col>
-                            <Form.Item name="expired" valuePropName="checked">
-                                <Switch checkedChildren="已过期" unCheckedChildren="未过期" />
                             </Form.Item>
                         </Col>
                         <Col>

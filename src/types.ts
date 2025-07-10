@@ -56,7 +56,6 @@ export interface Label {
 
 export interface UserQuery {
   name?: string;
-  gender?: boolean;
   expired?: boolean;
 }
 
