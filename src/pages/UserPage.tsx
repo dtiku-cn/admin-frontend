@@ -103,7 +103,10 @@ const UserPage: React.FC = () => {
             <Row gutter={16} style={{ marginBottom: 24 }}>
                 <Col span={6}>
                     <Card>
-                        <Statistic title="用户总数" value={total} valueStyle={fontSize} suffix={<small>`+${todayAdd}`</small>} />
+                        <Statistic title="用户总数"
+                            value={total}
+                            valueStyle={fontSize}
+                            suffix={<small style={{ marginLeft: 8 }}>+{todayAdd}</small>} />
                     </Card>
                 </Col>
                 <Col span={6}>
@@ -112,7 +115,7 @@ const UserPage: React.FC = () => {
                             value={todayAdd}
                             valueStyle={{ color: todayAdd > yesterdayAdd ? "#3f8600" : '#cf1322', ...fontSize }}
                             prefix={todayAdd == yesterdayAdd ? null : todayAdd > yesterdayAdd ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                            suffix={<small>yesterdayAdd</small>} />
+                            suffix={<small style={{ marginLeft: 8 }}>{yesterdayAdd}</small>} />
                     </Card>
                 </Col>
                 <Col span={6}>
