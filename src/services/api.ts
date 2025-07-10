@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, User, UserStatsByDay } from '../types.ts';
+import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, User, UserQuery, UserStatsByDay } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -102,8 +102,15 @@ export const KeyPointService = {
 }
 
 export const UserService = {
-    async fetch_users(page: number, size: number): Promise<PageResult<User>> {
-        const res = await fetch(`${API_BASE_URL}/users?page=${page}&page_size=${size}`);
+    async fetch_users(page: number, size: number, query: UserQuery = {}): Promise<PageResult<User>> {
+        const params = new URLSearchParams({
+            page: String(page),
+            size: String(size),
+            ...(query.name ? { name: query.name } : {}),
+            ...(query.gender !== undefined ? { gender: String(query.gender) } : {}),
+            ...(query.expired !== undefined ? { expired: String(query.expired) } : {}),
+        });
+        const res = await fetch(`${API_BASE_URL}/users?${params.toString()}`);
         return await res.json();
     },
 

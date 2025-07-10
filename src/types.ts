@@ -23,6 +23,14 @@ export interface ScheduleTask {
   modified?: string | null;
 }
 
+export interface KeyPoint {
+  id: number,
+  name: string,
+  pid: number,
+  exam_id: number,
+  paper_type: number,
+}
+
 export interface MenuItem {
   key: string;
   icon?: ReactNode;
@@ -44,6 +52,12 @@ export interface Label {
   exam_id: number;
   paper_type: number;
   hidden: boolean;
+}
+
+export interface UserQuery {
+  name?: string;
+  gender?: boolean;
+  expired?: boolean;
 }
 
 export interface User {

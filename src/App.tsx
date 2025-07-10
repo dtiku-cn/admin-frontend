@@ -1,5 +1,5 @@
 import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
-import { Layout, Menu, theme } from 'antd';
+import { Layout, Menu } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ExamCategoryTree from './pages/ExamCategoryTree';
 import ScheduleTaskPage from './pages/ScheduleTask';
@@ -33,9 +33,6 @@ const items = [
 ];
 
 function App() {
-    const {
-        token: { colorBgContainer, borderRadiusLG },
-    } = theme.useToken();
     const location = useLocation();
     const selectedKey = '/' + location.pathname.split("/").filter(Boolean)[0];
     return (
@@ -58,10 +55,8 @@ function App() {
                 <Layout style={{ padding: '24px' }}>
                     <Content
                         style={{
-                            padding: 24,
+                            padding: 0,
                             margin: 0,
-                            background: colorBgContainer,
-                            borderRadius: borderRadiusLG,
                             minHeight: 280,
                         }}
                     >

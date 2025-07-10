@@ -1,11 +1,11 @@
 // src/pages/UserPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Switch, Button } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import ReactECharts from 'echarts-for-react';
 import dayjs from 'dayjs';
 import { UserService } from '../services/api';
-import { User } from '../types';
+import { User, UserQuery } from '../types';
 
 const pageSize = 10;
 
@@ -13,16 +13,22 @@ const UserPage: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
+    const [query, setQuery] = useState<UserQuery>({});
     const [stats, setStats] = useState<{ day: string; count: number }[]>([]);
+    const [form] = Form.useForm();
 
-    useEffect(() => {
-        UserService.fetch_users(page, pageSize)
+    const loadUsers = () => {
+        UserService.fetch_users(page, pageSize, query)
             .then(data => {
                 setUsers(data.content);
                 setTotal(data.total_elements);
             })
             .catch(console.error);
-    }, [page]);
+    };
+
+    useEffect(() => {
+        loadUsers();
+    }, [page, query]);
 
     useEffect(() => {
         UserService.fetch_user_stats()
@@ -63,6 +69,16 @@ const UserPage: React.FC = () => {
         },
     ];
 
+    const onFinish = (values: any) => {
+        const parsedQuery: UserQuery = {
+            name: values.name || undefined,
+            gender: values.gender !== 'all' ? values.gender : undefined,
+            expired: values.expired ?? undefined,
+        };
+        setPage(1); // 重置到第一页
+        setQuery(parsedQuery);
+    };
+
     const chartOption = {
         title: { text: '每日新增用户' },
         tooltip: { trigger: 'axis' },
@@ -89,7 +105,34 @@ const UserPage: React.FC = () => {
                 <ReactECharts option={chartOption} style={{ height: 400 }} />
             </Card>
 
-            <Card title="用户列表">
+            <Card title="用户列表" extra={
+                <Form form={form} layout="inline" onFinish={onFinish}>
+                    <Row gutter={12}>
+                        <Col>
+                            <Form.Item name="name">
+                                <Input placeholder="姓名关键词" allowClear />
+                            </Form.Item>
+                        </Col>
+                        <Col>
+                            <Form.Item name="gender" initialValue="all">
+                                <Select style={{ width: 120 }}>
+                                    <Select.Option value="all">性别不限</Select.Option>
+                                    <Select.Option value={true}>男</Select.Option>
+                                    <Select.Option value={false}>女</Select.Option>
+                                </Select>
+                            </Form.Item>
+                        </Col>
+                        <Col>
+                            <Form.Item name="expired" valuePropName="checked">
+                                <Switch checkedChildren="已过期" unCheckedChildren="未过期" />
+                            </Form.Item>
+                        </Col>
+                        <Col>
+                            <Button type="primary" htmlType="submit">查询</Button>
+                        </Col>
+                    </Row>
+                </Form>
+            }>
                 <Table rowKey="id" columns={columns} dataSource={users} pagination={false} />
                 <Pagination
                     style={{ marginTop: 16, textAlign: 'right' }}
