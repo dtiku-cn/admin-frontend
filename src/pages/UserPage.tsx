@@ -112,10 +112,10 @@ const UserPage: React.FC = () => {
                 <Col span={6}>
                     <Card>
                         <Statistic title="今日新增用户数"
-                            value={todayAdd}
+                            value={`+${todayAdd}`}
                             valueStyle={{ color: todayAdd > yesterdayAdd ? "#3f8600" : '#cf1322', ...fontSize }}
                             prefix={todayAdd == yesterdayAdd ? null : todayAdd > yesterdayAdd ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
-                            suffix={<small style={{ marginLeft: 8 }}>{yesterdayAdd}</small>} />
+                            suffix={<small style={{ marginLeft: 8 }}>昨日+{yesterdayAdd}</small>} />
                     </Card>
                 </Col>
                 <Col span={6}>
