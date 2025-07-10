@@ -106,7 +106,7 @@ const UserPage: React.FC = () => {
                         <Statistic title="用户总数"
                             value={total}
                             valueStyle={fontSize}
-                            suffix={<small style={{ marginLeft: 8 }}>+{todayAdd}</small>} />
+                            suffix={<small style={{ marginLeft: 8, color: "#3f8600" }}>+{todayAdd}</small>} />
                     </Card>
                 </Col>
                 <Col span={6}>
