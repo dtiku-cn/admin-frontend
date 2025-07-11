@@ -142,8 +142,8 @@ const UserPage: React.FC = () => {
                             </Form.Item>
                         </Col>
                         <Col>
-                            <Form.Item name="expired" initialValue="">
-                                <Select style={{ width: 120 }} placeholder="是否过期">
+                            <Form.Item name="expired" initialValue={null}>
+                                <Select style={{ width: 120 }}>
                                     <Select.Option value={null}>不限</Select.Option>
                                     <Select.Option value={true}>已过期</Select.Option>
                                     <Select.Option value={false}>未过期</Select.Option>
