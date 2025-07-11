@@ -150,7 +150,7 @@ const ExamCategoryTree: React.FC = () => {
     }
 
     return (
-        <div style={{ padding: 24, background: "#fff" }}>
+        <Card style={{ width: "100%" }}>
             <Tree loadData={onLoadData} treeData={treeData} onSelect={handleSelect} showLine />
             <Modal
                 title={<Segmented
@@ -164,7 +164,7 @@ const ExamCategoryTree: React.FC = () => {
             >
                 <Tree loadData={onLoadLabelData} treeData={treeLabelData} showLine />
             </Modal>
-        </div>
+        </Card>
     );
 }
 
