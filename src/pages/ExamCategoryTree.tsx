@@ -1,4 +1,4 @@
-import { Modal, Segmented, Tree } from 'antd';
+import { Card, Modal, Segmented, Tree } from 'antd';
 import React, { Key, useEffect, useState } from 'react';
 import { examCategoryService, KeyPointService } from '../services/api.ts';
 
