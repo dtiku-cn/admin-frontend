@@ -8,6 +8,7 @@ const { Title, Paragraph } = Typography;
 const WebTextExtract: React.FC = () => {
     const [url, setUrl] = useState("");
     const [loading, setLoading] = useState(false);
+    const [rawHtml, setRawHtml] = useState<string>("");
     const [readability, setReadability] = useState<any>(null);
     const [domSmoothie, setDomSmoothie] = useState<any>(null);
 
@@ -18,11 +19,13 @@ const WebTextExtract: React.FC = () => {
         }
 
         setLoading(true);
+        setRawHtml("");
         setReadability(null);
         setDomSmoothie(null);
 
         try {
             const data = await TestService.fetchWebContent(url)
+            setRawHtml(data.raw_html);
             setReadability(data.readability_page);
             setDomSmoothie(data.dom_smoothie_article);
         } catch (err) {
@@ -50,6 +53,8 @@ const WebTextExtract: React.FC = () => {
 
             {loading && <Spin tip="提取中..." />}
 
+            {rawHtml && <TextArea value={rawHtml} rows={10} readOnly />}
+
             {readability && (
                 <>
                     <Title level={4}>🔍 Readability 提取结果</Title>
@@ -70,7 +75,7 @@ const WebTextExtract: React.FC = () => {
                     <Paragraph strong>内容（HTML）：</Paragraph>
                     <TextArea value={domSmoothie.content} rows={10} readOnly />
                     <Paragraph strong>纯文本：</Paragraph>
-                    <TextArea value={domSmoothie.text} rows={10} readOnly />
+                    <TextArea value={domSmoothie.text_content} rows={10} readOnly />
                 </>
             )}
         </div>

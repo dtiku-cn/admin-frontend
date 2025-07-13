@@ -88,6 +88,7 @@ export interface TextSimilarityResult {
 }
 
 export interface WebTextExtractResult {
+  raw_html: string,
   readability_page: any,
   dom_smoothie_article: any,
 }
