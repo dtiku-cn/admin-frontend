@@ -51,7 +51,7 @@ const items = [
 
 function App() {
     const location = useLocation();
-    const selectedKey = '/' + location.pathname.split("/").filter(Boolean)[0];
+    const selectedKey = location.pathname;
     return (
         <Layout style={{ minHeight: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center' }}>
