@@ -1,4 +1,4 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ExamCategoryTree from './pages/ExamCategoryTree';
@@ -6,6 +6,8 @@ import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
 import SystemConfigPage from './pages/SystemConfig';
 import UserPage from './pages/UserPage';
+import TextSimilarity from './pages/lab/TextSimilarity';
+import WebTextExtract from './pages/lab/WebTextExtract';
 
 const { Header, Content, Sider } = Layout;
 
@@ -29,6 +31,21 @@ const items = [
         key: '/user',
         icon: <UserOutlined />,
         label: <Link to="/user">用户管理</Link>,
+    },
+    {
+        key: '/test-lab',
+        icon: <BugOutlined />,
+        label: '实验室',
+        children: [
+            {
+                key: '/test-lab/text-similarity',
+                label: <Link to="/test-lab/text-similarity">文本相似度</Link>,
+            },
+            {
+                key: '/test-lab/web-extract',
+                label: <Link to="/test-lab/web-extract">网页提取</Link>,
+            },
+        ],
     },
 ];
 
@@ -66,6 +83,8 @@ function App() {
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
                             <Route path="/user" element={<UserPage />} />
+                            <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
+                            <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>

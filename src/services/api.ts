@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, User, UserQuery, UserStatsByDay } from '../types.ts';
+import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -107,7 +107,6 @@ export const UserService = {
             page: String(page),
             size: String(size),
             ...(query.name ? { name: query.name } : {}),
-            ...(query.gender !== undefined ? { gender: String(query.gender) } : {}),
             ...(query.expired !== undefined ? { expired: String(query.expired) } : {}),
         });
         const res = await fetch(`${API_BASE_URL}/users?${params.toString()}`);
@@ -117,5 +116,23 @@ export const UserService = {
     async fetch_user_stats(): Promise<UserStatsByDay[]> {
         const res = await fetch(`${API_BASE_URL}/user_stats`);
         return await res.json();
+    }
+}
+
+export const TestService = {
+    async fetchTextSimilarity(source: string, target: string): Promise<TextSimilarityResult> {
+        const res = await fetch(`${API_BASE_URL}/text_similarity`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ source, target }),
+        });
+        return await res.json();
+    },
+
+    async fetchWebContent(url: string): Promise<WebTextExtractResult> {
+        const response = await fetch(`${API_BASE_URL}/web_text_extract?url=${encodeURIComponent(url)}`);
+        return await response.json();
     }
 }

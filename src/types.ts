@@ -82,3 +82,12 @@ export interface UserStatsByDay {
   day: string;
   count: number;
 }
+
+export interface TextSimilarityResult {
+  [key: string]: number;
+}
+
+export interface WebTextExtractResult {
+  readability_page: any,
+  dom_smoothie_article: any,
+}
