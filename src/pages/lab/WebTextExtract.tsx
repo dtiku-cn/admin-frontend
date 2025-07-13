@@ -72,10 +72,16 @@ const WebTextExtract: React.FC = () => {
                     <Title level={4}>📄 DOM Smoothie 提取结果</Title>
                     <Paragraph strong>标题：</Paragraph>
                     <Paragraph>{domSmoothie.title}</Paragraph>
+                    <Paragraph strong>作者</Paragraph>
+                    <Paragraph>{domSmoothie.byline}</Paragraph>
+                    <Paragraph strong>发布时间</Paragraph>
+                    <Paragraph>{domSmoothie.published_time}</Paragraph>
                     <Paragraph strong>内容（HTML）：</Paragraph>
                     <TextArea value={domSmoothie.content} rows={10} readOnly />
                     <Paragraph strong>纯文本：</Paragraph>
                     <TextArea value={domSmoothie.text_content} rows={10} readOnly />
+                    <Paragraph strong>摘要</Paragraph>
+                    <TextArea value={domSmoothie.excerpt} rows={10} readOnly />
                 </>
             )}
         </div>
