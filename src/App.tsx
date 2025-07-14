@@ -53,7 +53,7 @@ function App() {
     const location = useLocation();
     const selectedKey = location.pathname;
     return (
-        <Layout style={{ minHeight: '100vh' }}>
+        <Layout style={{ height: '100vh' }}>
             <Header style={{ display: 'flex', alignItems: 'center' }}>
                 <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
                     管理后台
@@ -69,12 +69,12 @@ function App() {
                         items={items}
                     />
                 </Sider>
-                <Layout style={{ padding: '24px', overflow: "scroll", maxHeight: "100vh" }}>
+                <Layout style={{ padding: '24px', overflow: "scroll", maxHeight: "100%" }}>
                     <Content
                         style={{
                             padding: 0,
                             margin: 0,
-                            minHeight: 280,
+                            minHeight: "100%",
                         }}
                     >
                         <Routes>
