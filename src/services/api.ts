@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult } from '../types.ts';
+import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -134,5 +134,26 @@ export const TestService = {
     async fetchWebContent(url: string): Promise<WebTextExtractResult> {
         const response = await fetch(`${API_BASE_URL}/web_text_extract?url=${encodeURIComponent(url)}`);
         return await response.json();
+    },
+
+    async fetchWebTextLabel(
+        questionId: number,
+        url: string
+    ): Promise<WebTextLabelResponse> {
+        const params = new URLSearchParams({ url });
+        const response = await fetch(`${API_BASE_URL}/web_text_label/${questionId}?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`请求失败: ${response.status} ${errorText}`);
+        }
+
+        const data = (await response.json()) as WebTextLabelResponse;
+        return data;
     }
 }

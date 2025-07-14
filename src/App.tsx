@@ -8,6 +8,7 @@ import SystemConfigPage from './pages/SystemConfig';
 import UserPage from './pages/UserPage';
 import TextSimilarity from './pages/lab/TextSimilarity';
 import WebTextExtract from './pages/lab/WebTextExtract';
+import WebTextLabel from './pages/lab/WebTextLabel';
 
 const { Header, Content, Sider } = Layout;
 
@@ -44,6 +45,10 @@ const items = [
             {
                 key: '/test-lab/web-extract',
                 label: <Link to="/test-lab/web-extract">网页提取</Link>,
+            },
+            {
+                key: '/test-lab/web-text-label',
+                label: <Link to="/test-lab/web-text-label">网页文本标注</Link>,
             },
         ],
     },
@@ -85,6 +90,7 @@ function App() {
                             <Route path="/user" element={<UserPage />} />
                             <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
+                            <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>

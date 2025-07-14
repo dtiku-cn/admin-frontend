@@ -92,3 +92,8 @@ export interface WebTextExtractResult {
   readability_page: any,
   dom_smoothie_article: any,
 }
+
+export interface WebTextLabelResponse {
+  text: string;
+  labeled_text: string;
+}
