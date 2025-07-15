@@ -95,5 +95,10 @@ export interface WebTextExtractResult {
 
 export interface WebTextLabelResponse {
   text: string;
-  labeled_text: string;
+  labeled_text: LabelSentence[];
+}
+
+export interface LabelSentence {
+  sentence: string,
+  label?: string,
 }

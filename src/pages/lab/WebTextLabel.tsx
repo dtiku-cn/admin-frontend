@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Input, Button, Form, Typography, Spin } from 'antd';
+import { Input, Button, Form, Typography, Spin, Tooltip } from 'antd';
 import { TestService } from '../../services/api';
+import { LabelSentence } from '../../types';
 
 const { TextArea } = Input;
 const { Title } = Typography;
@@ -10,7 +11,7 @@ const WebTextLabel: React.FC = () => {
     const [questionId, setQuestionId] = useState('');
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
-    const [labeledText, setLabeledText] = useState('');
+    const [labeledText, setLabeledText] = useState([] as LabelSentence[]);
 
     const handleSubmit = async () => {
         if (!url || !questionId) return;
@@ -61,8 +62,11 @@ const WebTextLabel: React.FC = () => {
                             background: '#f9f9f9',
                             whiteSpace: 'pre-wrap',
                         }}
-                        dangerouslySetInnerHTML={{ __html: labeledText }}
-                    />
+                    >
+                        {labeledText.map(({ label, sentence }) => (label ? sentence : <Tooltip title={label}>
+                            <span style={{ color: label == "question" ? "red" : "green", background: label == "question" ? "#eee" : "ece" }}>{sentence}</span>
+                        </Tooltip>))}
+                    </div>
                 </>
             )}
         </div>
