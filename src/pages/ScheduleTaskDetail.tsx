@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate, useParams} from 'react-router-dom';
-import {Button, Descriptions, DescriptionsProps, message, Space} from 'antd';
+import {Button, Card, Descriptions, DescriptionsProps, message, Space} from 'antd';
 import type {ScheduleTask} from '../types.ts';
 import {scheduleTaskService} from '../services/api.ts';
 import {LeftOutlined} from "@ant-design/icons";
@@ -60,11 +60,11 @@ const ScheduleTaskDetail: React.FC = () => {
 
 
     return (
-        <div>
+        <Card>
             <Descriptions title={
                 <Space><Button type="text" icon={<LeftOutlined/>} onClick={() => navigate(-1)}/>任务详情</Space>
             } items={taskDetailItems}/>
-        </div>
+        </Card>
     );
 };
 
