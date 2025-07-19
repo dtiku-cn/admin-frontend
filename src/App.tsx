@@ -1,4 +1,4 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ExamCategoryTree from './pages/ExamCategoryTree';
@@ -9,6 +9,7 @@ import UserPage from './pages/UserPage';
 import TextSimilarity from './pages/lab/TextSimilarity';
 import WebTextExtract from './pages/lab/WebTextExtract';
 import WebTextLabel from './pages/lab/WebTextLabel';
+import MaterializedViewManager from './pages/MaterializedViewManager';
 
 const { Header, Content, Sider } = Layout;
 
@@ -32,6 +33,11 @@ const items = [
         key: '/user',
         icon: <UserOutlined />,
         label: <Link to="/user">用户管理</Link>,
+    },
+    {
+        key: '/materialized-view',
+        icon: <TableOutlined />,
+        label: <Link to="/materialized-view">物化视图</Link>,
     },
     {
         key: '/test-lab',
@@ -88,6 +94,7 @@ function App() {
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
                             <Route path="/user" element={<UserPage />} />
+                            <Route path="/materialized-view" element={<MaterializedViewManager />} />
                             <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
