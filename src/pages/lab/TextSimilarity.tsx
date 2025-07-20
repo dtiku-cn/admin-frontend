@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Input, Button, Table, Space, message } from 'antd';
+import { Input, Button, Table, Space, message, Typography } from 'antd';
 import { TextSimilarityResult } from '../../types';
 import { TestService } from '../../services/api';
 
 const { TextArea } = Input;
+const { Paragraph } = Typography;
 
 const TextSimilarity: React.FC = () => {
     const [source, setSource] = useState('');
@@ -38,6 +39,7 @@ const TextSimilarity: React.FC = () => {
             title: '相似度',
             dataIndex: 'value',
             key: 'value',
+            render: (v) => String(v).length < 100 ? v : (<Paragraph><pre>{v}</pre></Paragraph>)
         },
     ];
 
