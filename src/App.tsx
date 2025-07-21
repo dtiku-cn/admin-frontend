@@ -10,6 +10,7 @@ import TextSimilarity from './pages/lab/TextSimilarity';
 import WebTextExtract from './pages/lab/WebTextExtract';
 import WebTextLabel from './pages/lab/WebTextLabel';
 import MaterializedViewManager from './pages/MaterializedViewManager';
+import WebSearch from './pages/lab/WebSearch';
 
 const { Header, Content, Sider } = Layout;
 
@@ -56,6 +57,10 @@ const items = [
                 key: '/test-lab/web-text-label',
                 label: <Link to="/test-lab/web-text-label">网页文本标注</Link>,
             },
+            {
+                key: '/test-lab/web-search',
+                label: <Link to="/test-lab/web-search">网页搜索</Link>,
+            },
         ],
     },
 ];
@@ -98,6 +103,7 @@ function App() {
                             <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
+                            <Route path="/test-lab/web-search" element={<WebSearch />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>

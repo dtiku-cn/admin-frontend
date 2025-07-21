@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -133,6 +133,11 @@ export const TestService = {
 
     async fetchWebContent(url: string): Promise<WebTextExtractResult> {
         const response = await fetch(`${API_BASE_URL}/web_text_extract?url=${encodeURIComponent(url)}`);
+        return await response.json();
+    },
+
+    async fetchWebSearch(questionId: string, searchEngine: string): Promise<SearchItem[]> {
+        const response = await fetch(`${API_BASE_URL}/web_search/${questionId}/${searchEngine}`);
         return await response.json();
     },
 

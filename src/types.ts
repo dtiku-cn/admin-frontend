@@ -102,3 +102,9 @@ export interface LabelSentence {
   sentence: string,
   label?: string,
 }
+
+export interface SearchItem {
+  url: string;
+  title: string;
+  desc: string;
+}
