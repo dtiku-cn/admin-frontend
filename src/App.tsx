@@ -109,7 +109,7 @@ function App() {
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
                             <Route path="/test-lab/web-search" element={<WebSearch />} />
-                            <Route path="/test-lab/web-search" element={<OpenAITestInterface />} />
+                            <Route path="/test-lab/openai" element={<OpenAITestInterface />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>
