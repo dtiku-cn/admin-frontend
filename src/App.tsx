@@ -11,6 +11,7 @@ import WebTextExtract from './pages/lab/WebTextExtract';
 import WebTextLabel from './pages/lab/WebTextLabel';
 import MaterializedViewManager from './pages/MaterializedViewManager';
 import WebSearch from './pages/lab/WebSearch';
+import OpenAITestInterface from './pages/lab/OpenAITestInterface';
 
 const { Header, Content, Sider } = Layout;
 
@@ -61,6 +62,10 @@ const items = [
                 key: '/test-lab/web-search',
                 label: <Link to="/test-lab/web-search">网页搜索</Link>,
             },
+            {
+                key: '/test-lab/openai',
+                label: <Link to="/test-lab/openai">OpenAI</Link>,
+            },
         ],
     },
 ];
@@ -104,6 +109,7 @@ function App() {
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
                             <Route path="/test-lab/web-search" element={<WebSearch />} />
+                            <Route path="/test-lab/web-search" element={<OpenAITestInterface />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>

@@ -160,5 +160,22 @@ export const TestService = {
 
         const data = (await response.json()) as WebTextLabelResponse;
         return data;
+    },
+
+    async fetchOpenAI(text: string): Promise<any> {
+        const response = await fetch(`${API_BASE_URL}/test_call_open_ai`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'text/plain',
+            },
+            body: text,
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`请求失败: ${response.status} ${errorText}`);
+        }
+
+        return await response.json();
     }
 }
