@@ -21,7 +21,7 @@ const OpenAITestInterface: React.FC = () => {
                 const res = await fetch('/api/open_router_models');
                 const data = await res.json();
                 let models = (data.data || []).filter(m => m.name.includes("free"))
-                    .map(m => ({ label: `${m.name} (${m.hf_slug || m.slug})`, value: m.slug }))
+                    .map(m => ({ label: `${m.name} 【${m.hf_slug || m.slug}】`, value: m.slug }))
                 setModels(models);
                 if (data.data.length > 0) {
                     setSelectedModel(data.data[0].slug);
