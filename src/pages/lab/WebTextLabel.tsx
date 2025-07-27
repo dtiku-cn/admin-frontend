@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Input, Button, Form, Typography, Spin, Tooltip } from 'antd';
+import { Input, Button, Form, Typography, Spin, Tooltip, Select } from 'antd';
 import { TestService } from '../../services/api';
 import { LabelSentence } from '../../types';
 
@@ -9,6 +9,7 @@ const { Title } = Typography;
 const WebTextLabel: React.FC = () => {
     const [url, setUrl] = useState('');
     const [questionId, setQuestionId] = useState('');
+    const [algo, setAlgo] = useState('Label');
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
     const [labeledText, setLabeledText] = useState([] as LabelSentence[]);
@@ -18,7 +19,12 @@ const WebTextLabel: React.FC = () => {
 
         setLoading(true);
         try {
-            const data = await TestService.fetchWebTextLabel(Number(questionId), url);
+            let data;
+            if (algo === "Label") {
+                data = await TestService.fetchWebTextLabel(Number(questionId), url);
+            } else {
+                data = await TestService.fetchWebTextSimilarity(Number(questionId), url);
+            }
             setText(data.text);
             setLabeledText(data.labeled_text);
         } catch (err) {
@@ -32,6 +38,10 @@ const WebTextLabel: React.FC = () => {
     return (
         <div style={{ padding: 24 }}>
             <Title level={4}>网页内容标注工具</Title>
+            <Select value={algo} onChange={setAlgo}>
+                <Select.Option value="Label">Label</Select.Option>
+                <Select.Option value="Similarity">Similarity</Select.Option>
+            </Select>
             <Form layout="vertical" onFinish={handleSubmit}>
                 <Form.Item label="网页 URL">
                     <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="请输入网页地址" />

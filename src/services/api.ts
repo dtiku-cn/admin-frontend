@@ -162,6 +162,27 @@ export const TestService = {
         return data;
     },
 
+    async fetchWebTextSimilarity(
+        questionId: number,
+        url: string
+    ): Promise<WebTextLabelResponse> {
+        const params = new URLSearchParams({ url });
+        const response = await fetch(`${API_BASE_URL}/web_text_similarity/${questionId}?${params.toString()}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`请求失败: ${response.status} ${errorText}`);
+        }
+
+        const data = (await response.json()) as WebTextLabelResponse;
+        return data;
+    },
+
     async fetchOpenAI(text: string): Promise<any> {
         const response = await fetch(`${API_BASE_URL}/test_call_open_ai`, {
             method: 'POST',
