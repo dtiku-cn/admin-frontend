@@ -1,16 +1,36 @@
-import React, { useState } from 'react';
-import { Card, Button, Input, Form, Spin, Alert, Divider, Typography } from 'antd';
+import React, { useEffect, useState } from 'react';
+import { Card, Button, Input, Form, Spin, Alert, Divider, Typography, Select } from 'antd';
 import { LoadingOutlined, SendOutlined, CodeOutlined } from '@ant-design/icons';
 import { TestService } from '../../services/api';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
+const { Option } = Select;
 
 const OpenAITestInterface: React.FC = () => {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState(false);
     const [response, setResponse] = useState(null);
     const [error, setError] = useState(null);
+    const [models, setModels] = useState([]);
+    const [selectedModel, setSelectedModel] = useState(null);
+
+    useEffect(() => {
+        const fetchModels = async () => {
+            try {
+                const res = await fetch('/api/open_router_models');
+                const data = await res.json();
+                setModels(data.data || []);
+                if (data.data.length > 0) {
+                    setSelectedModel(data.data[0].slug);
+                }
+            } catch (err) {
+                console.error('模型加载失败:', err);
+            }
+        };
+
+        fetchModels();
+    }, []);
 
     const handleSubmit = async (values) => {
         const { text } = values;
@@ -19,8 +39,7 @@ const OpenAITestInterface: React.FC = () => {
         setResponse(null);
 
         try {
-            // 模拟API调用（实际应用中替换为真实API调用）
-            const resp = await TestService.fetchOpenAI(text);
+            const resp = await TestService.fetchOpenAI(text, selectedModel);
             setResponse(resp);
         } catch (err) {
             setError('API调用失败：' + err.message);
@@ -121,6 +140,24 @@ const OpenAITestInterface: React.FC = () => {
                     onFinish={handleSubmit}
                 >
                     <Form.Item
+                        name="model"
+                        label="选择模型"
+                        rules={[{ required: true, message: '请选择模型' }]}
+                    >
+                        <Select
+                            showSearch
+                            virtual
+                            value={selectedModel}
+                            options={models.map((model) => ({ value: model.slug, label: model.name }))}
+                            onChange={setSelectedModel}
+                            placeholder="请选择一个模型"
+                            filterOption={(input, option) =>
+                                option?.label.toLowerCase().includes(input.toLowerCase())
+                            }
+                        />
+                    </Form.Item>
+
+                    <Form.Item
                         name="text"
                         label="输入文本"
                         rules={[{ required: true, message: '请输入要处理的文本内容' }]}
@@ -171,7 +208,7 @@ const OpenAITestInterface: React.FC = () => {
 
             <div style={{ textAlign: 'center', marginTop: 24 }}>
                 <Text type="secondary">
-                    接口路径: POST /api/test_call_open_ai | 当前模型: deepseek/deepseek-r1-0528-qwen3-8b:free
+                    接口路径: POST /api/test_call_open_ai | 当前模型: {selectedModel || '未选择'}
                 </Text>
             </div>
         </div>
