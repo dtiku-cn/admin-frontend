@@ -183,8 +183,8 @@ export const TestService = {
         return data;
     },
 
-    async fetchOpenAI(text: string): Promise<any> {
-        const response = await fetch(`${API_BASE_URL}/test_call_open_ai`, {
+    async fetchOpenAI(text: string, select_model: string): Promise<any> {
+        const response = await fetch(`${API_BASE_URL}/test_call_open_ai/${select_model}:free`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'text/plain',

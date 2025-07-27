@@ -20,7 +20,9 @@ const OpenAITestInterface: React.FC = () => {
             try {
                 const res = await fetch('/api/open_router_models');
                 const data = await res.json();
-                setModels(data.data || []);
+                let models = (data.data || []).filter(m => m.name.includes("free"))
+                    .map(m => ({ label: `${m.name} (${m.hf_slug || m.slug})`, value: m.slug }))
+                setModels(models);
                 if (data.data.length > 0) {
                     setSelectedModel(data.data[0].slug);
                 }
@@ -148,7 +150,7 @@ const OpenAITestInterface: React.FC = () => {
                             showSearch
                             virtual
                             value={selectedModel}
-                            options={models.map((model) => ({ value: model.slug, label: model.name }))}
+                            options={models}
                             onChange={setSelectedModel}
                             placeholder="请选择一个模型"
                             filterOption={(input, option) =>
