@@ -5,7 +5,6 @@ import { TestService } from '../../services/api';
 
 const { TextArea } = Input;
 const { Title, Text } = Typography;
-const { Option } = Select;
 
 const OpenAITestInterface: React.FC = () => {
     const [form] = Form.useForm();
