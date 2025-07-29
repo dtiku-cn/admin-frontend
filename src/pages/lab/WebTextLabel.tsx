@@ -74,7 +74,10 @@ const WebTextLabel: React.FC = () => {
                         }}
                     >
                         {labeledText.map(({ label, sentence }) => (label ? <Tooltip title={label}>
-                            <span style={{ color: label == "question" ? "red" : "green", background: label == "question" ? "#eee" : "ece" }}>{sentence}</span>
+                            <span style={{
+                                color: label.startsWith("question") ? "red" : "green",
+                                background: label.startsWith("question") ? "#eee" : "ece"
+                            }}>{sentence}</span>
                         </Tooltip> : sentence))}
                     </div>
                 </>
