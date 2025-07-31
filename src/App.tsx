@@ -12,6 +12,7 @@ import WebTextLabel from './pages/lab/WebTextLabel';
 import MaterializedViewManager from './pages/MaterializedViewManager';
 import WebSearch from './pages/lab/WebSearch';
 import OpenAITestInterface from './pages/lab/OpenAITestInterface';
+import TextRankKeywordExtractor from './pages/lab/TextRankKeywordExtractor';
 
 const { Header, Content, Sider } = Layout;
 
@@ -66,6 +67,10 @@ const items = [
                 key: '/test-lab/openai',
                 label: <Link to="/test-lab/openai">OpenAI</Link>,
             },
+            {
+                key: '/test-lab/text-rank-keyword',
+                label: <Link to="/test-lab/text-rank-keyword">TextRank</Link>,
+            },
         ],
     },
 ];
@@ -110,6 +115,7 @@ function App() {
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
                             <Route path="/test-lab/web-search" element={<WebSearch />} />
                             <Route path="/test-lab/openai" element={<OpenAITestInterface />} />
+                            <Route path="/test-lab/text-rank-keyword" element={<TextRankKeywordExtractor />} />
                             <Route path="/" element={<Navigate to="/system" replace />} />
                         </Routes>
                     </Content>
