@@ -141,7 +141,7 @@ export const TestService = {
         return await response.json();
     },
 
-    async fetchWebTextLabel(params: { url: string; label_text: Record<string, string> }) {
+    async fetchWebTextLabel(params: { url: string; label_text: Record<string, string>; threshold?: number }) {
         return fetch('/api/web_text_label', {
             method: 'POST',
             headers: {
@@ -151,7 +151,7 @@ export const TestService = {
         }).then((res) => res.json());
     },
 
-    async fetchWebTextSimilarity(params: { url: string; label_text: Record<string, string> }) {
+    async fetchWebTextSimilarity(params: { url: string; label_text: Record<string, string>; threshold?: number }) {
         return fetch('/api/web_text_similarity', {
             method: 'POST',
             headers: {

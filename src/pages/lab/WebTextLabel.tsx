@@ -10,6 +10,7 @@ const { Title } = Typography;
 const WebTextLabel: React.FC = () => {
     const [url, setUrl] = useState('');
     const [labelText, setLabelText] = useState([{ key: '', value: '' }]);
+    const [threshold, setThreshold] = useState<number | undefined>(0.1);
     const [algo, setAlgo] = useState('Label');
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
@@ -34,9 +35,17 @@ const WebTextLabel: React.FC = () => {
         try {
             let data;
             if (algo === "Label") {
-                data = await TestService.fetchWebTextLabel({ url, label_text: labelMap });
+                data = await TestService.fetchWebTextLabel({
+                    url,
+                    label_text: labelMap,
+                    threshold,
+                });
             } else {
-                data = await TestService.fetchWebTextSimilarity({ url, label_text: labelMap });
+                data = await TestService.fetchWebTextSimilarity({
+                    url,
+                    label_text: labelMap,
+                    threshold,
+                });
             }
             setText(data.text);
             setLabeledText(data.labeled_text);
@@ -53,7 +62,7 @@ const WebTextLabel: React.FC = () => {
             <Title level={4}>网页内容标注工具</Title>
             <Select value={algo} onChange={setAlgo}>
                 <Select.Option value="Label">Label</Select.Option>
-                <Select.Option value="Similarity">Similarity</Select.Option>
+                <Select.Option value="Similarity" disabled>Similarity (已禁用)</Select.Option>
             </Select>
 
             <Form layout="vertical" onFinish={handleSubmit}>
@@ -98,6 +107,18 @@ const WebTextLabel: React.FC = () => {
                     >
                         添加标签
                     </Button>
+                </Form.Item>
+
+                <Form.Item label="相似度阈值（可选，默认 0.1）">
+                    <Input
+                        type="number"
+                        step={0.01}
+                        min={0}
+                        max={1}
+                        value={threshold}
+                        onChange={(e) => setThreshold(parseFloat(e.target.value))}
+                        placeholder="如 0.1"
+                    />
                 </Form.Item>
 
                 <Form.Item>
