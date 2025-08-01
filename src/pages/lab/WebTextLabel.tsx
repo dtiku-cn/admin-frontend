@@ -149,8 +149,8 @@ const WebTextLabel: React.FC = () => {
                             label ? (
                                 <Tooltip title={label} key={i}>
                                     <span style={{
-                                        color: label.startsWith("question") ? "red" : label.startsWith("solution") ? "green" : "black",
-                                        background: label.startsWith("question") ? "#eee" : label.startsWith("solution") ? "#ece" : "#fff",
+                                        color: label.startsWith("question") ? "red" : label.startsWith("solution") ? "green" : label.startsWith("material") ? "blue" : "black",
+                                        background: label.startsWith("question") ? "#eee" : label.startsWith("solution") ? "#ece" : label.startsWith("material") ? "#eec" : "#fff",
                                     }}>{sentence}</span>
                                 </Tooltip>
                             ) : (
