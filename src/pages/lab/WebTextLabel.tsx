@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Input, Button, Form, Typography, Spin, Tooltip, Select } from 'antd';
+import { Input, Button, Form, Typography, Spin, Tooltip, Select, Space } from 'antd';
+import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { TestService } from '../../services/api';
 import { LabelSentence } from '../../types';
 
@@ -8,22 +9,34 @@ const { Title } = Typography;
 
 const WebTextLabel: React.FC = () => {
     const [url, setUrl] = useState('');
-    const [questionId, setQuestionId] = useState('');
+    const [labelText, setLabelText] = useState([{ key: '', value: '' }]);
     const [algo, setAlgo] = useState('Label');
     const [loading, setLoading] = useState(false);
     const [text, setText] = useState('');
     const [labeledText, setLabeledText] = useState([] as LabelSentence[]);
 
     const handleSubmit = async () => {
-        if (!url || !questionId) return;
+        if (!url) return;
+
+        const labelMap: Record<string, string> = {};
+        for (const { key, value } of labelText) {
+            if (key && value) {
+                labelMap[key] = value;
+            }
+        }
+
+        if (Object.keys(labelMap).length === 0) {
+            alert('请至少填写一个有效的标签和文本');
+            return;
+        }
 
         setLoading(true);
         try {
             let data;
             if (algo === "Label") {
-                data = await TestService.fetchWebTextLabel(Number(questionId), url);
+                data = await TestService.fetchWebTextLabel({ url, label_text: labelMap });
             } else {
-                data = await TestService.fetchWebTextSimilarity(Number(questionId), url);
+                data = await TestService.fetchWebTextSimilarity({ url, label_text: labelMap });
             }
             setText(data.text);
             setLabeledText(data.labeled_text);
@@ -42,13 +55,51 @@ const WebTextLabel: React.FC = () => {
                 <Select.Option value="Label">Label</Select.Option>
                 <Select.Option value="Similarity">Similarity</Select.Option>
             </Select>
+
             <Form layout="vertical" onFinish={handleSubmit}>
                 <Form.Item label="网页 URL">
                     <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="请输入网页地址" />
                 </Form.Item>
-                <Form.Item label="Question ID">
-                    <Input value={questionId} onChange={(e) => setQuestionId(e.target.value)} placeholder="请输入 question_id" />
+
+                <Form.Item label="标签文本（label_text）">
+                    {labelText.map((item, index) => (
+                        <Space key={index} style={{ display: 'flex', marginBottom: 8 }} align="start">
+                            <Input
+                                placeholder="标签名，如 question1"
+                                value={item.key}
+                                onChange={(e) => {
+                                    const updated = [...labelText];
+                                    updated[index].key = e.target.value;
+                                    setLabelText(updated);
+                                }}
+                            />
+                            <Input
+                                placeholder="对应文本"
+                                value={item.value}
+                                onChange={(e) => {
+                                    const updated = [...labelText];
+                                    updated[index].value = e.target.value;
+                                    setLabelText(updated);
+                                }}
+                            />
+                            <MinusCircleOutlined
+                                onClick={() => {
+                                    const updated = labelText.filter((_, i) => i !== index);
+                                    setLabelText(updated);
+                                }}
+                            />
+                        </Space>
+                    ))}
+                    <Button
+                        icon={<PlusOutlined />}
+                        type="dashed"
+                        onClick={() => setLabelText([...labelText, { key: '', value: '' }])}
+                        block
+                    >
+                        添加标签
+                    </Button>
                 </Form.Item>
+
                 <Form.Item>
                     <Button type="primary" htmlType="submit" loading={loading}>
                         提取并标注
@@ -73,12 +124,18 @@ const WebTextLabel: React.FC = () => {
                             whiteSpace: 'pre-wrap',
                         }}
                     >
-                        {labeledText.map(({ label, sentence }) => (label ? <Tooltip title={label}>
-                            <span style={{
-                                color: label.startsWith("question") ? "red" : label.startsWith("solution") ? "green" : "black",
-                                background: label.startsWith("question") ? "#eee" : label.startsWith("solution") ? "#ece" : "#fff",
-                            }}>{sentence}</span>
-                        </Tooltip> : sentence))}
+                        {labeledText.map(({ label, sentence }, i) =>
+                            label ? (
+                                <Tooltip title={label} key={i}>
+                                    <span style={{
+                                        color: label.startsWith("question") ? "red" : label.startsWith("solution") ? "green" : "black",
+                                        background: label.startsWith("question") ? "#eee" : label.startsWith("solution") ? "#ece" : "#fff",
+                                    }}>{sentence}</span>
+                                </Tooltip>
+                            ) : (
+                                <span key={i}>{sentence}</span>
+                            )
+                        )}
                     </div>
                 </>
             )}

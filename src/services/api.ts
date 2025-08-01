@@ -141,46 +141,24 @@ export const TestService = {
         return await response.json();
     },
 
-    async fetchWebTextLabel(
-        questionId: number,
-        url: string
-    ): Promise<WebTextLabelResponse> {
-        const params = new URLSearchParams({ url });
-        const response = await fetch(`${API_BASE_URL}/web_text_label/${questionId}?${params.toString()}`, {
-            method: 'GET',
+    async fetchWebTextLabel(params: { url: string; label_text: Record<string, string> }) {
+        return fetch('/api/web_text_label', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`请求失败: ${response.status} ${errorText}`);
-        }
-
-        const data = (await response.json()) as WebTextLabelResponse;
-        return data;
+            body: JSON.stringify(params),
+        }).then((res) => res.json());
     },
 
-    async fetchWebTextSimilarity(
-        questionId: number,
-        url: string
-    ): Promise<WebTextLabelResponse> {
-        const params = new URLSearchParams({ url });
-        const response = await fetch(`${API_BASE_URL}/web_text_similarity/${questionId}?${params.toString()}`, {
-            method: 'GET',
+    async fetchWebTextSimilarity(params: { url: string; label_text: Record<string, string> }) {
+        return fetch('/api/web_text_similarity', {
+            method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-        });
-
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`请求失败: ${response.status} ${errorText}`);
-        }
-
-        const data = (await response.json()) as WebTextLabelResponse;
-        return data;
+            body: JSON.stringify(params),
+        }).then((res) => res.json());
     },
 
     async fetchOpenAI(text: string, select_model: string): Promise<any> {
