@@ -62,7 +62,7 @@ const WebTextLabel: React.FC = () => {
             <Title level={4}>网页内容标注工具</Title>
             <Select value={algo} onChange={setAlgo}>
                 <Select.Option value="Label">Label</Select.Option>
-                <Select.Option value="Similarity" disabled>Similarity (已禁用)</Select.Option>
+                <Select.Option value="Similarity">Similarity</Select.Option>
             </Select>
 
             <Form layout="vertical" onFinish={handleSubmit}>
