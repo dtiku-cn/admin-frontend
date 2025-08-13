@@ -13,6 +13,7 @@ import MaterializedViewManager from './pages/MaterializedViewManager';
 import WebSearch from './pages/lab/WebSearch';
 import OpenAITestInterface from './pages/lab/OpenAITestInterface';
 import TextRankKeywordExtractor from './pages/lab/TextRankKeywordExtractor';
+import HtmlTextExtractor from './pages/lab/HtmlTextExtractor';
 
 const { Header, Content, Sider } = Layout;
 
@@ -47,6 +48,10 @@ const items = [
         icon: <BugOutlined />,
         label: '实验室',
         children: [
+            {
+                key: '/test-lab/html-text',
+                label: <Link to="/test-lab/html-text">Html文本提取</Link>,
+            },
             {
                 key: '/test-lab/text-similarity',
                 label: <Link to="/test-lab/text-similarity">文本相似度</Link>,
@@ -110,6 +115,7 @@ function App() {
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
                             <Route path="/user" element={<UserPage />} />
                             <Route path="/materialized-view" element={<MaterializedViewManager />} />
+                            <Route path="/test-lab/html-text" element={<HtmlTextExtractor />} />
                             <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
                             <Route path="/test-lab/web-extract" element={<WebTextExtract />} />
                             <Route path="/test-lab/web-text-label" element={<WebTextLabel />} />
