@@ -1,4 +1,4 @@
-import type { ExamCategory, KeyPoint, Label, PageResult, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { ExamCategory, FromType, KeyPoint, Label, PageResult, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -83,8 +83,9 @@ export const scheduleTaskService = {
 
 
 export const examCategoryService = {
-    async find_exam_by_pid(pid: number = 0): Promise<ApiResponse<ExamCategory>> {
-        const response = await fetch(`${API_BASE_URL}/exam/${pid}`);
+    async find_exam_by_pid(pid: number = 0, from_ty?: FromType): Promise<ApiResponse<ExamCategory>> {
+        const from_ty_param = from_ty ? '&from_ty=' + String(from_ty) : '';
+        const response = await fetch(`${API_BASE_URL}/exam?pid=${pid}${from_ty_param}`);
         return response.json();
     },
 

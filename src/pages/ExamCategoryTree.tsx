@@ -1,6 +1,7 @@
 import { Card, Modal, Segmented, Tree } from 'antd';
 import React, { Key, useEffect, useState } from 'react';
 import { examCategoryService, KeyPointService } from '../services/api.ts';
+import { FromTypeDesc } from '../types.ts';
 
 interface DataNode {
     title: string;
@@ -42,16 +43,26 @@ const ExamCategoryTree: React.FC = () => {
     const [modelQueryType, setModelQueryType] = useState("label");
     const [selectedPaperType, setSelectedPaperType] = useState(null as Key | null);
     const [treeLabelData, setTreeLabelData] = useState([] as DataNode[]);
+    const [fromType, setFromType] = useState<string>('');
+
+    const fromTypeOptions = [
+        { label: '全部', value: '' },
+        ...Object.entries(FromTypeDesc).map(([key, label]) => ({
+            label,
+            value: key,
+        })),
+    ];
 
     useEffect(() => {
-        examCategoryService.find_exam_by_pid().then((resp) => {
+        const fromTypeParam = fromType ? (fromType as any) : undefined;
+        examCategoryService.find_exam_by_pid(0, fromTypeParam).then((resp) => {
             const treeData = resp.data.map(exam => ({
                 key: exam.id,
                 title: exam.name
             }) as DataNode);
             setTreeData(treeData);
         });
-    }, []);
+    }, [fromType]);
 
     const onLoadData = ({ key, children }: any) =>
         new Promise<void>((resolve) => {
@@ -59,7 +70,8 @@ const ExamCategoryTree: React.FC = () => {
                 resolve();
                 return;
             }
-            examCategoryService.find_exam_by_pid(key).then((resp) => {
+            const fromTypeParam = fromType ? (fromType as any) : undefined;
+            examCategoryService.find_exam_by_pid(key, fromTypeParam).then((resp) => {
                 const children = resp.data.map(exam => ({
                     key: exam.id,
                     title: exam.name
@@ -151,6 +163,13 @@ const ExamCategoryTree: React.FC = () => {
 
     return (
         <Card style={{ width: "100%" }}>
+            <div style={{ marginBottom: 8 }}>
+                <Segmented
+                    options={fromTypeOptions}
+                    value={fromType}
+                    onChange={(val) => setFromType(val as string)}
+                />
+            </div>
             <Tree loadData={onLoadData} treeData={treeData} onSelect={handleSelect} showLine />
             <Modal
                 title={<Segmented

@@ -108,3 +108,12 @@ export interface SearchItem {
   title: string;
   desc: string;
 }
+
+export enum FromTypeDesc {
+  fenbi = '粉笔',
+  huatu = '华图',
+  offcn = '中公',
+  chinagwy = 'ChinaGWY',
+}
+
+export type FromType = keyof FromTypeDesc;
