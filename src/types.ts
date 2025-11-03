@@ -114,6 +114,7 @@ export enum FromTypeDesc {
   huatu = '华图',
   offcn = '中公',
   chinagwy = 'ChinaGWY',
+  mock_exam = '模考',
 }
 
 export type FromType = keyof FromTypeDesc;
