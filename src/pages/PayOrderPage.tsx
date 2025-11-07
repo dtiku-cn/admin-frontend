@@ -3,7 +3,17 @@ import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag } f
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { PayOrderService } from '../services/api';
-import { PayOrder, PayOrderQuery, OrderStatus, OrderLevel, PayFrom } from '../types';
+import { 
+    PayOrder, 
+    PayOrderQuery, 
+    OrderStatus, 
+    OrderLevel, 
+    PayFrom,
+    OrderStatusDesc,
+    OrderLevelDesc,
+    PayFromDesc,
+    ORDER_STATUS_COLORS
+} from '../types';
 
 const pageSize = 10;
 
@@ -27,44 +37,6 @@ const PayOrderPage: React.FC = () => {
         loadOrders();
     }, [page, query]);
 
-    const getStatusColor = (status: string) => {
-        const colorMap: Record<string, string> = {
-            'created': 'default',
-            'paid': 'success',
-            'canceled': 'error',
-            'refunded': 'warning',
-        };
-        return colorMap[status] || 'default';
-    };
-
-    const getStatusText = (status: string) => {
-        const statusMap: Record<string, string> = {
-            'created': '已创建',
-            'paid': '已付款',
-            'canceled': '已取消',
-            'refunded': '已退款',
-        };
-        return statusMap[status] || status;
-    };
-
-    const getLevelText = (level: string) => {
-        const levelMap: Record<string, string> = {
-            'monthly': '月度',
-            'quarterly': '季度',
-            'half_year': '半年',
-            'annual': '一年',
-        };
-        return levelMap[level] || level;
-    };
-
-    const getPayFromText = (payFrom: string) => {
-        const payFromMap: Record<string, string> = {
-            'alipay': '支付宝',
-            'wechat': '微信',
-        };
-        return payFromMap[payFrom] || payFrom;
-    };
-
     const columns: ColumnsType<PayOrder> = [
         { title: '订单ID', dataIndex: 'id', width: 100 },
         { title: '用户ID', dataIndex: 'user_id', width: 100 },
@@ -72,20 +44,20 @@ const PayOrderPage: React.FC = () => {
             title: '会员类型',
             dataIndex: 'level',
             width: 120,
-            render: (level: string) => getLevelText(level),
+            render: (level: OrderLevel) => OrderLevelDesc[level],
         },
         {
             title: '支付方式',
             dataIndex: 'pay_from',
             width: 120,
-            render: (payFrom: string) => getPayFromText(payFrom),
+            render: (payFrom: PayFrom) => PayFromDesc[payFrom],
         },
         {
             title: '订单状态',
             dataIndex: 'status',
             width: 120,
-            render: (status: string) => (
-                <Tag color={getStatusColor(status)}>{getStatusText(status)}</Tag>
+            render: (status: OrderStatus) => (
+                <Tag color={ORDER_STATUS_COLORS[status]}>{OrderStatusDesc[status]}</Tag>
             ),
         },
         {
@@ -137,10 +109,9 @@ const PayOrderPage: React.FC = () => {
                         <Form.Item name="status" initialValue="">
                             <Select style={{ width: 120 }} placeholder="订单状态">
                                 <Select.Option value="">全部状态</Select.Option>
-                                <Select.Option value="created">已创建</Select.Option>
-                                <Select.Option value="paid">已付款</Select.Option>
-                                <Select.Option value="canceled">已取消</Select.Option>
-                                <Select.Option value="refunded">已退款</Select.Option>
+                                {Object.entries(OrderStatusDesc).map(([key, value]) => (
+                                    <Select.Option key={key} value={key}>{value}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
@@ -148,8 +119,9 @@ const PayOrderPage: React.FC = () => {
                         <Form.Item name="pay_from" initialValue="">
                             <Select style={{ width: 120 }} placeholder="支付方式">
                                 <Select.Option value="">全部方式</Select.Option>
-                                <Select.Option value="alipay">支付宝</Select.Option>
-                                <Select.Option value="wechat">微信</Select.Option>
+                                {Object.entries(PayFromDesc).map(([key, value]) => (
+                                    <Select.Option key={key} value={key}>{value}</Select.Option>
+                                ))}
                             </Select>
                         </Form.Item>
                     </Col>
