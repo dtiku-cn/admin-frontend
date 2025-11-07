@@ -118,3 +118,41 @@ export enum FromTypeDesc {
 }
 
 export type FromType = keyof FromTypeDesc;
+
+// 支付订单相关类型
+export interface PayOrder {
+  id: number;
+  user_id: number;
+  level: OrderLevel;
+  pay_from: PayFrom;
+  resp: any;
+  confirm: string | null;
+  status: OrderStatus;
+  created: string;
+  modified: string;
+}
+
+export enum OrderStatus {
+  created = '已创建',
+  paid = '已付款',
+  canceled = '已取消',
+  refunded = '已退款',
+}
+
+export enum OrderLevel {
+  monthly = '月度',
+  quarterly = '季度',
+  half_year = '半年',
+  annual = '一年',
+}
+
+export enum PayFrom {
+  alipay = '支付宝',
+  wechat = '微信',
+}
+
+export interface PayOrderQuery {
+  user_id?: number;
+  status?: string;
+  pay_from?: string;
+}

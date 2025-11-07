@@ -1,4 +1,4 @@
-import type { ExamCategory, FromType, KeyPoint, Label, PageResult, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { ExamCategory, FromType, KeyPoint, Label, PageResult, PayOrder, PayOrderQuery, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -177,5 +177,19 @@ export const TestService = {
         }
 
         return await response.json();
+    }
+}
+
+export const PayOrderService = {
+    async fetch_pay_orders(page: number, size: number, query: PayOrderQuery = {}): Promise<PageResult<PayOrder>> {
+        const params = new URLSearchParams({
+            page: String(page),
+            size: String(size),
+            ...(query.user_id ? { user_id: String(query.user_id) } : {}),
+            ...(query.status ? { status: query.status } : {}),
+            ...(query.pay_from ? { pay_from: query.pay_from } : {}),
+        });
+        const res = await fetch(`${API_BASE_URL}/pay/orders?${params.toString()}`);
+        return await res.json();
     }
 }

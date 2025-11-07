@@ -1,4 +1,4 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined, DollarOutlined } from '@ant-design/icons';
 import { Layout, Menu } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import ExamCategoryTree from './pages/ExamCategoryTree';
@@ -6,6 +6,7 @@ import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
 import SystemConfigPage from './pages/SystemConfig';
 import UserPage from './pages/UserPage';
+import PayOrderPage from './pages/PayOrderPage';
 import TextSimilarity from './pages/lab/TextSimilarity';
 import WebTextExtract from './pages/lab/WebTextExtract';
 import WebTextLabel from './pages/lab/WebTextLabel';
@@ -37,6 +38,11 @@ const items = [
         key: '/user',
         icon: <UserOutlined />,
         label: <Link to="/user">用户管理</Link>,
+    },
+    {
+        key: '/pay-orders',
+        icon: <DollarOutlined />,
+        label: <Link to="/pay-orders">支付订单</Link>,
     },
     {
         key: '/materialized-view',
@@ -114,6 +120,7 @@ function App() {
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
                             <Route path="/user" element={<UserPage />} />
+                            <Route path="/pay-orders" element={<PayOrderPage />} />
                             <Route path="/materialized-view" element={<MaterializedViewManager />} />
                             <Route path="/test-lab/html-text" element={<HtmlTextExtractor />} />
                             <Route path="/test-lab/text-similarity" element={<TextSimilarity />} />
