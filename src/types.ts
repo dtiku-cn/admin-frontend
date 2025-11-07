@@ -171,3 +171,15 @@ export interface PayOrderQuery {
   status?: OrderStatus;
   pay_from?: PayFrom;
 }
+
+export interface PayStatsByDay {
+  day: string;
+  paid_count: number;
+  paid_amount: number;
+  unpaid_user_count: number;
+}
+
+export interface PayStats {
+  stats: PayStatsByDay[];
+  unpaid_user_count: number;
+}
