@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag, Tooltip } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
 import { PayOrderService } from '../services/api';
@@ -63,20 +63,32 @@ const PayOrderPage: React.FC = () => {
         {
             title: '创建时间',
             dataIndex: 'created',
-            width: 180,
-            render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm:ss'),
+            width: 110,
+            render: (v: string) => (
+                <Tooltip title={dayjs(v).format('YYYY-MM-DD HH:mm:ss')}>
+                    {dayjs(v).format('YYYY-MM-DD')}
+                </Tooltip>
+            ),
         },
         {
             title: '确认时间',
             dataIndex: 'confirm',
-            width: 180,
-            render: (v: string | null) => v ? dayjs(v).format('YYYY-MM-DD HH:mm:ss') : '-',
+            width: 110,
+            render: (v: string | null) => v ? (
+                <Tooltip title={dayjs(v).format('YYYY-MM-DD HH:mm:ss')}>
+                    {dayjs(v).format('YYYY-MM-DD')}
+                </Tooltip>
+            ) : '-',
         },
         {
             title: '修改时间',
             dataIndex: 'modified',
-            width: 180,
-            render: (v: string) => dayjs(v).format('YYYY-MM-DD HH:mm:ss'),
+            width: 110,
+            render: (v: string) => (
+                <Tooltip title={dayjs(v).format('YYYY-MM-DD HH:mm:ss')}>
+                    {dayjs(v).format('YYYY-MM-DD')}
+                </Tooltip>
+            ),
         },
     ];
 
@@ -139,7 +151,7 @@ const PayOrderPage: React.FC = () => {
                 columns={columns} 
                 dataSource={orders} 
                 pagination={false}
-                scroll={{ x: 1200 }}
+                scroll={{ x: 950 }}
             />
             <Pagination
                 style={{ marginTop: 16, textAlign: 'right' }}
