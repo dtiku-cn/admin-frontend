@@ -10,4 +10,132 @@ body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
     'Helvetica Neue', Arial, 'Noto Sans', sans-serif, 'Apple Color Emoji',
     'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 移动端优化 */
+@media (max-width: 768px) {
+  /* 确保表格在移动端可以横向滚动 */
+  .ant-table-wrapper {
+    overflow-x: auto;
+  }
+
+  /* 卡片间距优化 */
+  .ant-card {
+    margin-bottom: 12px;
+  }
+
+  .ant-card-head-title {
+    font-size: 14px;
+  }
+
+  /* 表单字段宽度自适应 */
+  .ant-form-item {
+    margin-bottom: 12px;
+  }
+
+  /* 按钮在移动端可以更大一些，方便点击 */
+  .ant-btn {
+    min-height: 36px;
+  }
+
+  /* 分页器在移动端居中显示 */
+  .ant-pagination {
+    text-align: center !important;
+  }
+
+  /* Modal 在移动端优化 */
+  .ant-modal {
+    max-width: 95vw;
+    margin: 8px auto;
+  }
+
+  .ant-modal-body {
+    padding: 16px;
+  }
+
+  /* Select 下拉框在移动端的优化 */
+  .ant-select-dropdown {
+    max-width: 95vw;
+  }
+}
+
+/* 小屏幕设备优化 */
+@media (max-width: 576px) {
+  /* 隐藏不必要的列 */
+  .ant-table-small .ant-table-thead > tr > th,
+  .ant-table-small .ant-table-tbody > tr > td {
+    padding: 8px 4px;
+    font-size: 12px;
+  }
+
+  /* 表格内容紧凑显示 */
+  .ant-table-wrapper {
+    font-size: 12px;
+  }
+
+  /* 统计卡片优化 */
+  .ant-statistic-title {
+    font-size: 12px;
+  }
+
+  .ant-statistic-content {
+    font-size: 18px;
+  }
+
+  /* 表单标签优化 */
+  .ant-form-item-label > label {
+    font-size: 13px;
+  }
+
+  /* Input 和 Select 高度优化 */
+  .ant-input,
+  .ant-select-selector {
+    font-size: 14px;
+  }
+}
+
+/* 平板设备优化 */
+@media (min-width: 768px) and (max-width: 992px) {
+  .ant-card {
+    margin-bottom: 16px;
+  }
+}
+
+/* 确保内容区域不会被侧边栏遮挡 */
+.ant-layout-content {
+  overflow-x: hidden;
+}
+
+/* 优化 ECharts 在移动端的显示 */
+@media (max-width: 768px) {
+  .echarts-for-react {
+    min-height: 250px !important;
+  }
+}
+
+/* 优化滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* 确保表格在小屏幕上不会溢出 */
+.ant-table-content {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }

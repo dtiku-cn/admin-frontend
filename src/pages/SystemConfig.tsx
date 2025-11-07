@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography, Switch } from 'antd';
+import { Button, Form, Input, message, Modal, Space, Table, Tooltip, Typography, Switch, Grid } from 'antd';
 import { CheckOutlined, CloseOutlined } from '@ant-design/icons';
+import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import type { SystemConfig } from '../types.ts';
 import { systemConfigService } from '../services/api.ts';
 
 const { Paragraph } = Typography;
+const { useBreakpoint } = Grid;
 
 const SystemConfigPage: React.FC = () => {
     const [data, setData] = useState<SystemConfig[]>([]);
     const [total, setTotal] = useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [form] = Form.useForm();
+    const screens = useBreakpoint();
 
     const fetchData = async () => {
         try {
@@ -61,11 +64,13 @@ const SystemConfigPage: React.FC = () => {
             title: 'ID',
             dataIndex: 'id',
             key: 'id',
+            responsive: ['md'] as Breakpoint[],
         },
         {
             title: '版本',
             dataIndex: 'version',
             key: 'version',
+            responsive: ['lg'] as Breakpoint[],
         },
         {
             title: '配置键',
@@ -79,16 +84,19 @@ const SystemConfigPage: React.FC = () => {
             title: '值',
             dataIndex: 'value',
             key: 'value',
-            render: (value: any, record: SystemConfig) => value === undefined ? '-' : typeof value === 'boolean' ? (
+            render: (value: unknown, record: SystemConfig) => value === undefined ? '-' : typeof value === 'boolean' ? (
                 <Switch
                     checkedChildren={<CheckOutlined />}
                     unCheckedChildren={<CloseOutlined />}
                     value={value}
                     onChange={(value: boolean) => handleChecked({ ...record, value })}
+                    size={screens.xs ? 'small' : 'default'}
                 />
             ) : (
                 <Paragraph style={{ margin: 0 }}>
-                    <pre style={{ margin: 0 }}>{JSON.stringify(value)}</pre>
+                    <pre style={{ margin: 0, fontSize: screens.xs ? '10px' : '14px', wordBreak: 'break-all' }}>
+                        {JSON.stringify(value)}
+                    </pre>
                 </Paragraph>
             ),
         },
@@ -96,20 +104,26 @@ const SystemConfigPage: React.FC = () => {
             title: '创建时间',
             dataIndex: 'created',
             key: 'created',
+            responsive: ['lg'] as Breakpoint[],
             render: (created: string | null) => created || '-',
         },
         {
             title: '修改时间',
             dataIndex: 'modified',
             key: 'modified',
+            responsive: ['md'] as Breakpoint[],
             render: (modified: string | null) => modified || '-',
         },
         {
             title: '操作',
             key: 'action',
-            render: (_: any, record: SystemConfig) => typeof record.value === 'boolean' ? null : (
+            render: (_: unknown, record: SystemConfig) => typeof record.value === 'boolean' ? null : (
                 <Space size="middle">
-                    <Button type="link" onClick={() => handleEdit(record)}>
+                    <Button 
+                        type="link" 
+                        onClick={() => handleEdit(record)}
+                        size={screens.xs ? 'small' : 'middle'}
+                    >
                         编辑
                     </Button>
                 </Space>
@@ -125,9 +139,12 @@ const SystemConfigPage: React.FC = () => {
                 rowKey={(record) => record.key}
                 pagination={{
                     total,
-                    showSizeChanger: true,
+                    showSizeChanger: !screens.xs,
                     showTotal: (total) => `共 ${total} 条`,
+                    size: screens.xs ? 'small' : 'default',
                 }}
+                size={screens.xs ? 'small' : 'middle'}
+                scroll={{ x: screens.xs ? 600 : undefined }}
             />
 
             <Modal
@@ -135,6 +152,7 @@ const SystemConfigPage: React.FC = () => {
                 open={isModalVisible}
                 onOk={handleOk}
                 onCancel={() => setIsModalVisible(false)}
+                width={screens.xs ? '90%' : 520}
             >
                 <Form form={form} layout="vertical">
                     <Form.Item
@@ -155,7 +173,7 @@ const SystemConfigPage: React.FC = () => {
                         name="value"
                         label="值"
                     >
-                        <Input.TextArea />
+                        <Input.TextArea rows={screens.xs ? 3 : 4} />
                     </Form.Item>
                 </Form>
             </Modal>

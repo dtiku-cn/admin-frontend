@@ -1,6 +1,7 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined, DollarOutlined } from '@ant-design/icons';
-import { Layout, Menu } from 'antd';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined, DollarOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { Layout, Menu, Button, Grid } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
+import { useState } from 'react';
 import ExamCategoryTree from './pages/ExamCategoryTree';
 import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
@@ -17,6 +18,7 @@ import TextRankKeywordExtractor from './pages/lab/TextRankKeywordExtractor';
 import HtmlTextExtractor from './pages/lab/HtmlTextExtractor';
 
 const { Header, Content, Sider } = Layout;
+const { useBreakpoint } = Grid;
 
 const items = [
     {
@@ -89,24 +91,71 @@ const items = [
 function App() {
     const location = useLocation();
     const selectedKey = location.pathname;
+    const [collapsed, setCollapsed] = useState(false);
+    const screens = useBreakpoint();
+    
+    // 移动端默认折叠
+    const isMobile = !screens.md;
+    
     return (
         <Layout style={{ height: '100vh' }}>
-            <Header style={{ display: 'flex', alignItems: 'center' }}>
-                <div style={{ color: 'white', fontSize: '20px', fontWeight: 'bold' }}>
+            <Header style={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                padding: isMobile ? '0 16px' : '0 24px',
+                gap: 12
+            }}>
+                <Button
+                    type="text"
+                    icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
+                    onClick={() => setCollapsed(!collapsed)}
+                    style={{
+                        fontSize: '16px',
+                        width: 32,
+                        height: 32,
+                        color: 'white',
+                    }}
+                />
+                <div style={{ 
+                    color: 'white', 
+                    fontSize: isMobile ? '16px' : '20px', 
+                    fontWeight: 'bold' 
+                }}>
                     管理后台
                 </div>
             </Header>
             <Layout>
-                <Sider width={200}>
+                <Sider 
+                    width={200}
+                    collapsed={collapsed}
+                    collapsedWidth={isMobile ? 0 : 80}
+                    breakpoint="md"
+                    onBreakpoint={(broken) => {
+                        setCollapsed(broken);
+                    }}
+                    style={{
+                        overflow: 'auto',
+                        height: 'calc(100vh - 64px)',
+                        position: isMobile ? 'fixed' : 'relative',
+                        left: 0,
+                        zIndex: 999,
+                    }}
+                    trigger={null}
+                >
                     <Menu
                         mode="inline"
                         defaultSelectedKeys={['/system']}
                         selectedKeys={[selectedKey]}
                         style={{ height: '100%', borderRight: 0 }}
                         items={items}
+                        inlineCollapsed={collapsed}
                     />
                 </Sider>
-                <Layout style={{ padding: '24px', overflow: "scroll", maxHeight: "100%" }}>
+                <Layout style={{ 
+                    padding: isMobile ? '12px' : '24px', 
+                    overflow: "auto",
+                    marginLeft: (isMobile && !collapsed) ? 0 : 0,
+                }}>
                     <Content
                         style={{
                             padding: 0,
