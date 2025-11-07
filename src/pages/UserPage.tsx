@@ -5,18 +5,30 @@ import type { ColumnsType } from 'antd/es/table';
 import ReactECharts from 'echarts-for-react';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
+import { useSearchParams } from 'react-router-dom';
 import { UserService } from '../services/api';
 import { User, UserQuery } from '../types';
 
 const pageSize = 10;
 
 const UserPage: React.FC = () => {
+    const [searchParams] = useSearchParams();
     const [users, setUsers] = useState<User[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
     const [query, setQuery] = useState<UserQuery>({});
     const [stats, setStats] = useState<{ day: string; count: number }[]>([]);
     const [form] = Form.useForm();
+
+    // 从URL参数初始化查询条件
+    useEffect(() => {
+        const nameParam = searchParams.get('name');
+        if (nameParam) {
+            const initialQuery: UserQuery = { name: nameParam };
+            setQuery(initialQuery);
+            form.setFieldsValue({ name: nameParam });
+        }
+    }, [searchParams, form]);
 
     const loadUsers = () => {
         UserService.fetch_users(page, pageSize, query)

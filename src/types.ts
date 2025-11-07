@@ -155,6 +155,8 @@ export type PayFrom = keyof typeof PayFromDesc;
 export interface PayOrder {
   id: number;
   user_id: number;
+  user_name?: string;
+  user_avatar?: string;
   level: OrderLevel;
   pay_from: PayFrom;
   resp: any;

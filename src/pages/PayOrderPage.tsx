@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag, Tooltip } from 'antd';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag, Tooltip, Avatar } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import dayjs from 'dayjs';
+import { Link } from 'react-router-dom';
 import { PayOrderService } from '../services/api';
 import { 
     PayOrder, 
@@ -24,22 +25,40 @@ const PayOrderPage: React.FC = () => {
     const [query, setQuery] = useState<PayOrderQuery>({});
     const [form] = Form.useForm();
 
-    const loadOrders = () => {
+    const loadOrders = useCallback(() => {
         PayOrderService.fetch_pay_orders(page, pageSize, query)
             .then(data => {
                 setOrders(data.content);
                 setTotal(data.total_elements);
             })
             .catch(console.error);
-    };
+    }, [page, query]);
 
     useEffect(() => {
         loadOrders();
-    }, [page, query]);
+    }, [loadOrders]);
 
     const columns: ColumnsType<PayOrder> = [
         { title: '订单ID', dataIndex: 'id', width: 100 },
-        { title: '用户ID', dataIndex: 'user_id', width: 100 },
+        {
+            title: '用户',
+            dataIndex: 'user_name',
+            width: 200,
+            render: (userName: string | undefined, record: PayOrder) => (
+                userName ? (
+                    <Link to={`/user?name=${encodeURIComponent(userName)}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <Avatar src={record.user_avatar} size={32}>
+                            {userName.charAt(0)}
+                        </Avatar>
+                        <span>{userName}</span>
+                    </Link>
+                ) : (
+                    <Tooltip title={`用户ID: ${record.user_id}`}>
+                        <span style={{ color: '#999' }}>用户{record.user_id}</span>
+                    </Tooltip>
+                )
+            ),
+        },
         {
             title: '会员类型',
             dataIndex: 'level',
@@ -92,11 +111,11 @@ const PayOrderPage: React.FC = () => {
         },
     ];
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: { user_id?: string; status?: string; pay_from?: string }) => {
         const parsedQuery: PayOrderQuery = {
             user_id: values.user_id ? parseInt(values.user_id) : undefined,
-            status: values.status || undefined,
-            pay_from: values.pay_from || undefined,
+            status: (values.status || undefined) as OrderStatus | undefined,
+            pay_from: (values.pay_from || undefined) as PayFrom | undefined,
         };
         setPage(1); // 重置到第一页
         setQuery(parsedQuery);
