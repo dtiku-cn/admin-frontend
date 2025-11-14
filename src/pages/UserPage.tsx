@@ -129,6 +129,13 @@ const UserPage: React.FC = () => {
     const chartOption = {
         title: { text: '每日新增用户' },
         tooltip: { trigger: 'axis' },
+        grid: {
+            left: '3%',
+            right: '5%',
+            bottom: '10%',
+            top: '15%',
+            containLabel: true
+        },
         xAxis: {
             type: 'category',
             data: stats.map(s => s.day.split('T')[0]),
@@ -291,7 +298,8 @@ const UserPage: React.FC = () => {
             >
                 <ReactECharts 
                     option={chartOption} 
-                    style={{ height: screens.xs ? 250 : 400 }} 
+                    style={{ width: '100%', height: screens.xs ? '250px' : '400px' }} 
+                    opts={{ renderer: 'canvas' }}
                 />
             </Card>
 

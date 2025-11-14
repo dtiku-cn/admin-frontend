@@ -229,6 +229,13 @@ const PayOrderPage: React.FC = () => {
                 data: ['付款数量', '付款金额'],
                 top: 30,
             },
+            grid: {
+                left: '3%',
+                right: '8%',
+                bottom: '10%',
+                top: '20%',
+                containLabel: true
+            },
             xAxis: {
                 type: 'category',
                 data: dates,
@@ -279,6 +286,13 @@ const PayOrderPage: React.FC = () => {
         return {
             title: { text: '每日未付款用户数' },
             tooltip: { trigger: 'axis' },
+            grid: {
+                left: '3%',
+                right: '5%',
+                bottom: '10%',
+                top: '15%',
+                containLabel: true
+            },
             xAxis: {
                 type: 'category',
                 data: dates,
@@ -386,7 +400,8 @@ const PayOrderPage: React.FC = () => {
                     >
                         <ReactECharts 
                             option={paidCombinedOption} 
-                            style={{ height: screens.xs ? '300px' : '400px' }}
+                            style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
+                            opts={{ renderer: 'canvas' }}
                         />
                     </Card>
                 </Col>
@@ -394,7 +409,8 @@ const PayOrderPage: React.FC = () => {
                     <Card>
                         <ReactECharts 
                             option={unpaidUserOption} 
-                            style={{ height: screens.xs ? '300px' : '400px' }}
+                            style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
+                            opts={{ renderer: 'canvas' }}
                         />
                     </Card>
                 </Col>

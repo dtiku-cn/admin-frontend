@@ -109,6 +109,16 @@ body {
 }
 
 /* 优化 ECharts 在移动端的显示 */
+.echarts-for-react {
+  width: 100% !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+.echarts-for-react canvas {
+  max-width: 100% !important;
+}
+
 @media (max-width: 768px) {
   .echarts-for-react {
     min-height: 250px !important;
