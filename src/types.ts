@@ -83,6 +83,11 @@ export interface UserStatsByDay {
   count: number;
 }
 
+export interface StatsQuery {
+  start_date?: string; // YYYY-MM-DD format
+  end_date?: string;   // YYYY-MM-DD format
+}
+
 export interface OnlineUser {
   id: number;
   name: string;

@@ -1,17 +1,18 @@
 // src/pages/UserPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, Carousel, Avatar, Typography } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, Carousel, Avatar, Typography, DatePicker } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import ReactECharts from 'echarts-for-react';
 import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { useSearchParams } from 'react-router-dom';
 import { UserService } from '../services/api';
 import { User, UserQuery, OnlineUserStats } from '../types';
 
 const { useBreakpoint } = Grid;
 const { Text } = Typography;
+const { RangePicker } = DatePicker;
 
 const pageSize = 10;
 
@@ -25,6 +26,12 @@ const UserPage: React.FC = () => {
     const [onlineStats, setOnlineStats] = useState<OnlineUserStats>({ online_count: 0, online_users: [] });
     const [form] = Form.useForm();
     const screens = useBreakpoint();
+    
+    // 日期范围状态，默认最近30天
+    const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
+        dayjs().subtract(30, 'days'),
+        dayjs()
+    ]);
 
     // 从URL参数初始化查询条件
     useEffect(() => {
@@ -50,10 +57,13 @@ const UserPage: React.FC = () => {
     }, [page, query]);
 
     useEffect(() => {
-        UserService.fetch_user_stats()
+        const startDate = dateRange[0].format('YYYY-MM-DD');
+        const endDate = dateRange[1].format('YYYY-MM-DD');
+        
+        UserService.fetch_user_stats(startDate, endDate)
             .then(data => setStats(data))
             .catch(console.error);
-    }, []);
+    }, [dateRange]);
 
     // 加载在线用户数据
     const loadOnlineUsers = () => {
@@ -257,6 +267,25 @@ const UserPage: React.FC = () => {
             
             <Card 
                 title="用户增长趋势" 
+                extra={
+                    <RangePicker
+                        value={dateRange}
+                        onChange={(dates) => {
+                            if (dates && dates[0] && dates[1]) {
+                                setDateRange([dates[0], dates[1]]);
+                            }
+                        }}
+                        format="YYYY-MM-DD"
+                        allowClear={false}
+                        presets={[
+                            { label: '最近一周', value: [dayjs().subtract(7, 'days'), dayjs()] },
+                            { label: '最近一个月', value: [dayjs().subtract(30, 'days'), dayjs()] },
+                            { label: '最近三个月', value: [dayjs().subtract(90, 'days'), dayjs()] },
+                            { label: '最近半年', value: [dayjs().subtract(180, 'days'), dayjs()] },
+                            { label: '最近一年', value: [dayjs().subtract(365, 'days'), dayjs()] },
+                        ]}
+                    />
+                }
                 style={{ marginBottom: 24 }}
                 styles={{ body: { padding: screens.xs ? 12 : 24 } }}
             >

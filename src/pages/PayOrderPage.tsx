@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag, Tooltip, Avatar, Grid, Space, Statistic } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Tag, Tooltip, Avatar, Grid, Space, Statistic, DatePicker } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import type { EChartsOption } from 'echarts';
 import ReactECharts from 'echarts-for-react';
 import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import { Link } from 'react-router-dom';
 import { PayOrderService } from '../services/api';
 import { 
@@ -22,6 +22,7 @@ import {
 } from '../types';
 
 const { useBreakpoint } = Grid;
+const { RangePicker } = DatePicker;
 
 const PAGE_SIZE = 10;
 
@@ -54,6 +55,12 @@ const PayOrderPage: React.FC = () => {
     const [unpaidUserCount, setUnpaidUserCount] = useState(0);
     const [form] = Form.useForm();
     const screens = useBreakpoint();
+    
+    // 日期范围状态，默认最近30天
+    const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
+        dayjs().subtract(30, 'days'),
+        dayjs()
+    ]);
 
     const loadOrders = useCallback(() => {
         PayOrderService.fetch_pay_orders(page, PAGE_SIZE, query)
@@ -69,13 +76,16 @@ const PayOrderPage: React.FC = () => {
     }, [loadOrders]);
 
     useEffect(() => {
-        PayOrderService.fetch_pay_stats()
+        const startDate = dateRange[0].format('YYYY-MM-DD');
+        const endDate = dateRange[1].format('YYYY-MM-DD');
+        
+        PayOrderService.fetch_pay_stats(startDate, endDate)
             .then(data => {
                 setStats(data.stats);
                 setUnpaidUserCount(data.unpaid_user_count);
             })
             .catch(console.error);
-    }, []);
+    }, [dateRange]);
 
     const columns: ColumnsType<PayOrder> = [
         { 
@@ -353,7 +363,27 @@ const PayOrderPage: React.FC = () => {
             {/* 统计图表 */}
             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
                 <Col xs={24} lg={16}>
-                    <Card>
+                    <Card
+                        extra={
+                            <RangePicker
+                                value={dateRange}
+                                onChange={(dates) => {
+                                    if (dates && dates[0] && dates[1]) {
+                                        setDateRange([dates[0], dates[1]]);
+                                    }
+                                }}
+                                format="YYYY-MM-DD"
+                                allowClear={false}
+                                presets={[
+                                    { label: '最近一周', value: [dayjs().subtract(7, 'days'), dayjs()] },
+                                    { label: '最近一个月', value: [dayjs().subtract(30, 'days'), dayjs()] },
+                                    { label: '最近三个月', value: [dayjs().subtract(90, 'days'), dayjs()] },
+                                    { label: '最近半年', value: [dayjs().subtract(180, 'days'), dayjs()] },
+                                    { label: '最近一年', value: [dayjs().subtract(365, 'days'), dayjs()] },
+                                ]}
+                            />
+                        }
+                    >
                         <ReactECharts 
                             option={paidCombinedOption} 
                             style={{ height: screens.xs ? '300px' : '400px' }}

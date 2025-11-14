@@ -114,8 +114,12 @@ export const UserService = {
         return await res.json();
     },
 
-    async fetch_user_stats(): Promise<UserStatsByDay[]> {
-        const res = await fetch(`${API_BASE_URL}/user_stats`);
+    async fetch_user_stats(start_date?: string, end_date?: string): Promise<UserStatsByDay[]> {
+        const params = new URLSearchParams();
+        if (start_date) params.append('start_date', start_date);
+        if (end_date) params.append('end_date', end_date);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/user_stats${queryString ? '?' + queryString : ''}`);
         return await res.json();
     },
 
@@ -198,8 +202,12 @@ export const PayOrderService = {
         return await res.json();
     },
 
-    async fetch_pay_stats(): Promise<PayStats> {
-        const res = await fetch(`${API_BASE_URL}/pay/stats`);
+    async fetch_pay_stats(start_date?: string, end_date?: string): Promise<PayStats> {
+        const params = new URLSearchParams();
+        if (start_date) params.append('start_date', start_date);
+        if (end_date) params.append('end_date', end_date);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/pay/stats${queryString ? '?' + queryString : ''}`);
         return await res.json();
     }
 }
