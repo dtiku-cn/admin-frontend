@@ -1,4 +1,4 @@
-import type { ExamCategory, FromType, KeyPoint, Label, PageResult, PayOrder, PayOrderQuery, PayStats, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { ExamCategory, FromType, KeyPoint, Label, OnlineUserStats, PageResult, PayOrder, PayOrderQuery, PayStats, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -116,6 +116,11 @@ export const UserService = {
 
     async fetch_user_stats(): Promise<UserStatsByDay[]> {
         const res = await fetch(`${API_BASE_URL}/user_stats`);
+        return await res.json();
+    },
+
+    async fetch_online_users(): Promise<OnlineUserStats> {
+        const res = await fetch(`${API_BASE_URL}/online_users`);
         return await res.json();
     }
 }

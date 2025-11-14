@@ -1,16 +1,17 @@
 // src/pages/UserPage.tsx
 import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, Carousel, Avatar, Typography } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import ReactECharts from 'echarts-for-react';
-import { ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { useSearchParams } from 'react-router-dom';
 import { UserService } from '../services/api';
-import { User, UserQuery } from '../types';
+import { User, UserQuery, OnlineUserStats } from '../types';
 
 const { useBreakpoint } = Grid;
+const { Text } = Typography;
 
 const pageSize = 10;
 
@@ -21,6 +22,7 @@ const UserPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [query, setQuery] = useState<UserQuery>({});
     const [stats, setStats] = useState<{ day: string; count: number }[]>([]);
+    const [onlineStats, setOnlineStats] = useState<OnlineUserStats>({ online_count: 0, online_users: [] });
     const [form] = Form.useForm();
     const screens = useBreakpoint();
 
@@ -51,6 +53,20 @@ const UserPage: React.FC = () => {
         UserService.fetch_user_stats()
             .then(data => setStats(data))
             .catch(console.error);
+    }, []);
+
+    // 加载在线用户数据
+    const loadOnlineUsers = () => {
+        UserService.fetch_online_users()
+            .then(data => setOnlineStats(data))
+            .catch(console.error);
+    };
+
+    useEffect(() => {
+        loadOnlineUsers();
+        // 每30秒刷新一次在线用户数据
+        const interval = setInterval(loadOnlineUsers, 30000);
+        return () => clearInterval(interval);
     }, []);
 
     const columns: ColumnsType<User> = [
@@ -124,6 +140,16 @@ const UserPage: React.FC = () => {
     const yesterdayAdd = stats.length > 1 ? stats[stats.length - 2]?.count : 0;
     const fontSize = { fontSize: "1.5em" };
 
+    // 将在线用户分组，每组显示8个
+    const groupOnlineUsers = () => {
+        const groups = [];
+        const itemsPerSlide = screens.xs ? 4 : 8;
+        for (let i = 0; i < onlineStats.online_users.length; i += itemsPerSlide) {
+            groups.push(onlineStats.online_users.slice(i, i + itemsPerSlide));
+        }
+        return groups;
+    };
+
     return (
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -151,22 +177,84 @@ const UserPage: React.FC = () => {
                 <Col xs={24} sm={12} md={12} lg={6}>
                     <Card>
                         <Statistic 
-                            title="已付费用户数" 
-                            value={0} 
-                            valueStyle={{ ...fontSize, fontSize: screens.xs ? '1.2em' : '1.5em' }} 
+                            title="当日实时在线" 
+                            value={onlineStats.online_count} 
+                            valueStyle={{ color: "#1890ff", ...fontSize, fontSize: screens.xs ? '1.2em' : '1.5em' }}
+                            prefix={<UserOutlined />}
                         />
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
                     <Card>
                         <Statistic 
-                            title="昨日付费用户数" 
+                            title="已付费用户数" 
                             value={0} 
                             valueStyle={{ ...fontSize, fontSize: screens.xs ? '1.2em' : '1.5em' }} 
                         />
                     </Card>
                 </Col>
             </Row>
+
+            {onlineStats.online_count > 0 && (
+                <Card 
+                    title="实时在线用户" 
+                    style={{ marginBottom: 24 }}
+                    styles={{ body: { padding: screens.xs ? 12 : 24 } }}
+                >
+                    <Carousel autoplay autoplaySpeed={5000} dots={true}>
+                        {groupOnlineUsers().map((group, groupIndex) => (
+                            <div key={groupIndex}>
+                                <Row gutter={[16, 16]} justify="start">
+                                    {group.map((user) => (
+                                        <Col 
+                                            key={user.id} 
+                                            xs={12} 
+                                            sm={8} 
+                                            md={6} 
+                                            lg={3}
+                                            style={{ textAlign: 'center' }}
+                                        >
+                                            <div style={{ 
+                                                display: 'flex', 
+                                                flexDirection: 'column', 
+                                                alignItems: 'center',
+                                                padding: screens.xs ? 8 : 16,
+                                            }}>
+                                                <Avatar 
+                                                    src={user.avatar} 
+                                                    size={screens.xs ? 48 : 64} 
+                                                    icon={<UserOutlined />}
+                                                    style={{ marginBottom: 8 }}
+                                                />
+                                                <Text 
+                                                    ellipsis={{ tooltip: user.name }}
+                                                    style={{ 
+                                                        maxWidth: '100%',
+                                                        fontSize: screens.xs ? 12 : 14,
+                                                        fontWeight: 500,
+                                                    }}
+                                                >
+                                                    {user.name}
+                                                </Text>
+                                                <Text 
+                                                    type="secondary"
+                                                    style={{ 
+                                                        fontSize: screens.xs ? 10 : 12,
+                                                        marginTop: 4,
+                                                    }}
+                                                >
+                                                    {dayjs(user.modified).format(screens.xs ? 'HH:mm' : 'MM-DD HH:mm')}
+                                                </Text>
+                                            </div>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            </div>
+                        ))}
+                    </Carousel>
+                </Card>
+            )}
+            
             <Card 
                 title="用户增长趋势" 
                 style={{ marginBottom: 24 }}

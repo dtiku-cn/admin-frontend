@@ -83,6 +83,18 @@ export interface UserStatsByDay {
   count: number;
 }
 
+export interface OnlineUser {
+  id: number;
+  name: string;
+  avatar: string;
+  modified: string;
+}
+
+export interface OnlineUserStats {
+  online_count: number;
+  online_users: OnlineUser[];
+}
+
 export interface TextSimilarityResult {
   [key: string]: number;
 }
