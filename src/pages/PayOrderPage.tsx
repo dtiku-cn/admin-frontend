@@ -285,19 +285,34 @@ const PayOrderPage: React.FC = () => {
 
         return {
             title: { text: '每日未付款用户数' },
-            tooltip: { trigger: 'axis' },
+            tooltip: { 
+                trigger: 'axis',
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                formatter: (params: any) => {
+                    const paramArray = Array.isArray(params) ? params : [params];
+                    const date = paramArray[0].axisValue;
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    const items = paramArray.map((item: any) => {
+                        return `${item.marker}${item.seriesName}: ${item.value}人`;
+                    }).join('<br/>');
+                    return `${date}<br/>${items}`;
+                }
+            },
             grid: {
                 left: '3%',
                 right: '5%',
                 bottom: '10%',
-                top: '15%',
+                top: '20%',
                 containLabel: true
             },
             xAxis: {
                 type: 'category',
                 data: dates,
             },
-            yAxis: { type: 'value' },
+            yAxis: { 
+                type: 'value',
+                axisLabel: { formatter: '{value} 人' }
+            },
             series: [
                 {
                     name: '未付款用户',
@@ -375,46 +390,46 @@ const PayOrderPage: React.FC = () => {
                 </Col>
             </Row>
             {/* 统计图表 */}
-            <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-                <Col xs={24} lg={16}>
-                    <Card
-                        extra={
-                            <RangePicker
-                                value={dateRange}
-                                onChange={(dates) => {
-                                    if (dates && dates[0] && dates[1]) {
-                                        setDateRange([dates[0], dates[1]]);
-                                    }
-                                }}
-                                format="YYYY-MM-DD"
-                                allowClear={false}
-                                presets={[
-                                    { label: '最近一周', value: [dayjs().subtract(7, 'days'), dayjs()] },
-                                    { label: '最近一个月', value: [dayjs().subtract(30, 'days'), dayjs()] },
-                                    { label: '最近三个月', value: [dayjs().subtract(90, 'days'), dayjs()] },
-                                    { label: '最近半年', value: [dayjs().subtract(180, 'days'), dayjs()] },
-                                    { label: '最近一年', value: [dayjs().subtract(365, 'days'), dayjs()] },
-                                ]}
-                            />
-                        }
-                    >
+            <Card 
+                title="数据统计"
+                style={{ marginBottom: 24 }}
+                extra={
+                    <RangePicker
+                        value={dateRange}
+                        onChange={(dates) => {
+                            if (dates && dates[0] && dates[1]) {
+                                setDateRange([dates[0], dates[1]]);
+                            }
+                        }}
+                        format="YYYY-MM-DD"
+                        allowClear={false}
+                        presets={[
+                            { label: '最近一周', value: [dayjs().subtract(7, 'days'), dayjs()] },
+                            { label: '最近一个月', value: [dayjs().subtract(30, 'days'), dayjs()] },
+                            { label: '最近三个月', value: [dayjs().subtract(90, 'days'), dayjs()] },
+                            { label: '最近半年', value: [dayjs().subtract(180, 'days'), dayjs()] },
+                            { label: '最近一年', value: [dayjs().subtract(365, 'days'), dayjs()] },
+                        ]}
+                    />
+                }
+            >
+                <Row gutter={[16, 16]}>
+                    <Col xs={24}>
                         <ReactECharts 
                             option={paidCombinedOption} 
                             style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
                             opts={{ renderer: 'canvas' }}
                         />
-                    </Card>
-                </Col>
-                <Col xs={24} lg={8}>
-                    <Card>
+                    </Col>
+                    <Col xs={24}>
                         <ReactECharts 
                             option={unpaidUserOption} 
                             style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
                             opts={{ renderer: 'canvas' }}
                         />
-                    </Card>
-                </Col>
-            </Row>
+                    </Col>
+                </Row>
+            </Card>
             {/* 订单查询与列表 */}
             <Card 
                 title="支付订单查询"
