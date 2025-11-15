@@ -1,4 +1,4 @@
-import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined, DollarOutlined, MenuFoldOutlined, MenuUnfoldOutlined } from '@ant-design/icons';
+import { AlignLeftOutlined, ScheduleOutlined, SettingOutlined, UserOutlined, BugOutlined, TableOutlined, DollarOutlined, MenuFoldOutlined, MenuUnfoldOutlined, DashboardOutlined } from '@ant-design/icons';
 import { Layout, Menu, Button, Grid } from 'antd';
 import { Link, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useState } from 'react';
@@ -16,6 +16,7 @@ import WebSearch from './pages/lab/WebSearch';
 import OpenAITestInterface from './pages/lab/OpenAITestInterface';
 import TextRankKeywordExtractor from './pages/lab/TextRankKeywordExtractor';
 import HtmlTextExtractor from './pages/lab/HtmlTextExtractor';
+import RealtimeStats from './pages/RealtimeStats';
 
 const { Header, Content, Sider } = Layout;
 const { useBreakpoint } = Grid;
@@ -25,6 +26,11 @@ const items = [
         key: '/system',
         icon: <SettingOutlined />,
         label: <Link to="/system">系统配置</Link>,
+    },
+    {
+        key: '/realtime-stats',
+        icon: <DashboardOutlined />,
+        label: <Link to="/realtime-stats">实时监控</Link>,
     },
     {
         key: '/schedule',
@@ -165,6 +171,7 @@ function App() {
                     >
                         <Routes>
                             <Route path="/system" element={<SystemConfigPage />} />
+                            <Route path="/realtime-stats" element={<RealtimeStats />} />
                             <Route path="/schedule" element={<ScheduleTaskPage />} />
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />

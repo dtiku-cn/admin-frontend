@@ -200,3 +200,49 @@ export interface PayStats {
   stats: PayStatsByDay[];
   unpaid_user_count: number;
 }
+
+// 实时统计相关类型
+export interface BlockedIp {
+  ip: string;
+  request_count: number;
+  first_seen: string;
+  last_seen: string;
+  block_until: string;
+}
+
+export interface SuspiciousUser {
+  user_id: string;
+  user_name: string;
+  request_count: number;
+  error_rate: number;
+  window_start: string;
+  window_end: string;
+  risk_level: 'low' | 'medium' | 'high';
+}
+
+export interface TrafficStats {
+  metric_type: string;
+  metric_key: string;
+  value: number;
+  window_start: string;
+  window_end: string;
+}
+
+export interface RateLimitConfig {
+  endpoint: string;
+  current_qps: number;
+  avg_response_time: number;
+  error_rate: number;
+  suggested_limit: number;
+  window_time: string;
+}
+
+export interface HotUrl {
+  url_path: string;
+  request_count: number;
+  avg_response_size: number;
+  status_4xx_count: number;
+  status_5xx_count: number;
+  window_start: string;
+  window_end: string;
+}

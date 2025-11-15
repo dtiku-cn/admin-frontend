@@ -1,4 +1,4 @@
-import type { ExamCategory, FromType, KeyPoint, Label, OnlineUserStats, PageResult, PayOrder, PayOrderQuery, PayStats, ScheduleTask, SearchItem, SystemConfig, TextSimilarityResult, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { BlockedIp, ExamCategory, FromType, HotUrl, KeyPoint, Label, OnlineUserStats, PageResult, PayOrder, PayOrderQuery, PayStats, RateLimitConfig, ScheduleTask, SearchItem, SuspiciousUser, SystemConfig, TextSimilarityResult, TrafficStats, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -208,6 +208,33 @@ export const PayOrderService = {
         if (end_date) params.append('end_date', end_date);
         const queryString = params.toString();
         const res = await fetch(`${API_BASE_URL}/pay/stats${queryString ? '?' + queryString : ''}`);
+        return await res.json();
+    }
+}
+
+export const RealtimeStatsService = {
+    async fetch_blocked_ips(): Promise<BlockedIp[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/blocked-ips`);
+        return await res.json();
+    },
+
+    async fetch_suspicious_users(): Promise<SuspiciousUser[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/suspicious-users`);
+        return await res.json();
+    },
+
+    async fetch_traffic_stats(): Promise<TrafficStats[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/traffic`);
+        return await res.json();
+    },
+
+    async fetch_rate_limits(): Promise<RateLimitConfig[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/rate-limits`);
+        return await res.json();
+    },
+
+    async fetch_hot_urls(): Promise<HotUrl[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/hot-urls`);
         return await res.json();
     }
 }
