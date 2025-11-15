@@ -203,6 +203,7 @@ export interface PayStats {
 
 // 实时统计相关类型
 export interface BlockedIp {
+  host: string;
   ip: string;
   request_count: number;
   first_seen: string;
@@ -211,6 +212,7 @@ export interface BlockedIp {
 }
 
 export interface SuspiciousUser {
+  host: string;
   user_id: string;
   user_name: string;
   request_count: number;
@@ -221,6 +223,7 @@ export interface SuspiciousUser {
 }
 
 export interface TrafficStats {
+  host: string;
   metric_type: string;
   metric_key: string;
   value: number;
@@ -229,6 +232,7 @@ export interface TrafficStats {
 }
 
 export interface RateLimitConfig {
+  host: string;
   endpoint: string;
   current_qps: number;
   avg_response_time: number;
@@ -238,6 +242,7 @@ export interface RateLimitConfig {
 }
 
 export interface HotUrl {
+  host: string;
   url_path: string;
   request_count: number;
   avg_response_size: number;

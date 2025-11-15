@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Tag, Grid, Row, Col, Statistic, Button, Spin, Empty, Typography } from 'antd';
+import { Card, Table, Tag, Grid, Row, Col, Statistic, Button, Spin, Empty, Typography, Select, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import ReactECharts from 'echarts-for-react';
 import { ReloadOutlined, WarningOutlined, UserOutlined, DashboardOutlined, FireOutlined } from '@ant-design/icons';
@@ -12,6 +12,8 @@ const { Title, Text } = Typography;
 
 const RealtimeStats: React.FC = () => {
     const [loading, setLoading] = useState(false);
+    const [hosts, setHosts] = useState<string[]>([]);
+    const [selectedHost, setSelectedHost] = useState<string>('');
     const [blockedIps, setBlockedIps] = useState<BlockedIp[]>([]);
     const [suspiciousUsers, setSuspiciousUsers] = useState<SuspiciousUser[]>([]);
     const [trafficStats, setTrafficStats] = useState<TrafficStats[]>([]);
@@ -19,15 +21,27 @@ const RealtimeStats: React.FC = () => {
     const [hotUrls, setHotUrls] = useState<HotUrl[]>([]);
     const screens = useBreakpoint();
 
+    const loadHosts = async () => {
+        try {
+            const hostList = await RealtimeStatsService.fetch_hosts();
+            setHosts(hostList);
+            if (hostList.length > 0 && !selectedHost) {
+                setSelectedHost(hostList[0]);
+            }
+        } catch (error) {
+            console.error('加载 hosts 列表失败:', error);
+        }
+    };
+
     const loadAllStats = async () => {
         setLoading(true);
         try {
             const [ips, users, traffic, limits, urls] = await Promise.all([
-                RealtimeStatsService.fetch_blocked_ips(),
-                RealtimeStatsService.fetch_suspicious_users(),
-                RealtimeStatsService.fetch_traffic_stats(),
-                RealtimeStatsService.fetch_rate_limits(),
-                RealtimeStatsService.fetch_hot_urls(),
+                RealtimeStatsService.fetch_blocked_ips(selectedHost),
+                RealtimeStatsService.fetch_suspicious_users(selectedHost),
+                RealtimeStatsService.fetch_traffic_stats(selectedHost),
+                RealtimeStatsService.fetch_rate_limits(selectedHost),
+                RealtimeStatsService.fetch_hot_urls(selectedHost),
             ]);
             setBlockedIps(ips);
             setSuspiciousUsers(users);
@@ -42,11 +56,17 @@ const RealtimeStats: React.FC = () => {
     };
 
     useEffect(() => {
-        loadAllStats();
-        // 每30秒自动刷新
-        const interval = setInterval(loadAllStats, 30000);
-        return () => clearInterval(interval);
+        loadHosts();
     }, []);
+
+    useEffect(() => {
+        if (selectedHost !== undefined) {
+            loadAllStats();
+            // 每30秒自动刷新
+            const interval = setInterval(loadAllStats, 30000);
+            return () => clearInterval(interval);
+        }
+    }, [selectedHost]);
 
     // 计算流量统计汇总
     const getTotalRequests = () => {
@@ -349,14 +369,27 @@ const RealtimeStats: React.FC = () => {
         <Spin spinning={loading}>
             <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
                 <Title level={screens.xs ? 4 : 3} style={{ margin: 0 }}>实时流量监控</Title>
-                <Button 
-                    type="primary" 
-                    icon={<ReloadOutlined />} 
-                    onClick={loadAllStats}
-                    size={screens.xs ? 'small' : 'middle'}
-                >
-                    刷新数据
-                </Button>
+                <Space size="middle">
+                    <Select
+                        value={selectedHost}
+                        onChange={setSelectedHost}
+                        style={{ width: screens.xs ? 150 : 200 }}
+                        size={screens.xs ? 'small' : 'middle'}
+                        placeholder="选择 Host"
+                        options={hosts.map(host => ({
+                            label: host || '(空)',
+                            value: host,
+                        }))}
+                    />
+                    <Button 
+                        type="primary" 
+                        icon={<ReloadOutlined />} 
+                        onClick={loadAllStats}
+                        size={screens.xs ? 'small' : 'middle'}
+                    >
+                        刷新数据
+                    </Button>
+                </Space>
             </div>
 
             {/* 统计卡片 */}

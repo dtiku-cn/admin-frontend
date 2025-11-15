@@ -213,28 +213,48 @@ export const PayOrderService = {
 }
 
 export const RealtimeStatsService = {
-    async fetch_blocked_ips(): Promise<BlockedIp[]> {
-        const res = await fetch(`${API_BASE_URL}/stats/blocked-ips`);
+    async fetch_hosts(): Promise<string[]> {
+        const res = await fetch(`${API_BASE_URL}/stats/hosts`);
         return await res.json();
     },
 
-    async fetch_suspicious_users(): Promise<SuspiciousUser[]> {
-        const res = await fetch(`${API_BASE_URL}/stats/suspicious-users`);
+    async fetch_blocked_ips(host?: string): Promise<BlockedIp[]> {
+        const params = new URLSearchParams();
+        if (host) params.append('host', host);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/stats/blocked-ips${queryString ? '?' + queryString : ''}`);
         return await res.json();
     },
 
-    async fetch_traffic_stats(): Promise<TrafficStats[]> {
-        const res = await fetch(`${API_BASE_URL}/stats/traffic`);
+    async fetch_suspicious_users(host?: string): Promise<SuspiciousUser[]> {
+        const params = new URLSearchParams();
+        if (host) params.append('host', host);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/stats/suspicious-users${queryString ? '?' + queryString : ''}`);
         return await res.json();
     },
 
-    async fetch_rate_limits(): Promise<RateLimitConfig[]> {
-        const res = await fetch(`${API_BASE_URL}/stats/rate-limits`);
+    async fetch_traffic_stats(host?: string): Promise<TrafficStats[]> {
+        const params = new URLSearchParams();
+        if (host) params.append('host', host);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/stats/traffic${queryString ? '?' + queryString : ''}`);
         return await res.json();
     },
 
-    async fetch_hot_urls(): Promise<HotUrl[]> {
-        const res = await fetch(`${API_BASE_URL}/stats/hot-urls`);
+    async fetch_rate_limits(host?: string): Promise<RateLimitConfig[]> {
+        const params = new URLSearchParams();
+        if (host) params.append('host', host);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/stats/rate-limits${queryString ? '?' + queryString : ''}`);
+        return await res.json();
+    },
+
+    async fetch_hot_urls(host?: string): Promise<HotUrl[]> {
+        const params = new URLSearchParams();
+        if (host) params.append('host', host);
+        const queryString = params.toString();
+        const res = await fetch(`${API_BASE_URL}/stats/hot-urls${queryString ? '?' + queryString : ''}`);
         return await res.json();
     }
 }
