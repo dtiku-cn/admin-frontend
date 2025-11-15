@@ -304,7 +304,7 @@ const ScheduleTaskPage: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: screens.xs ? '12px' : '24px' }}>
+        <>
             {/* 统计信息卡片 */}
             <Row gutter={[16, 16]} style={{ marginBottom: 16 }}>
                 <Col xs={24} sm={12} md={6}>
@@ -452,7 +452,7 @@ const ScheduleTaskPage: React.FC = () => {
                     </Form.Item>
                 </Form>
             </Modal>
-        </div>
+        </>
     );
 };
 
