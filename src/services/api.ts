@@ -1,4 +1,4 @@
-import type { BlockedIp, ExamCategory, FromType, HotUrl, KeyPoint, Label, OnlineUserStats, PageResult, PayOrder, PayOrderQuery, PayStats, RateLimitConfig, ScheduleTask, SearchItem, SuspiciousUser, SystemConfig, TextSimilarityResult, TrafficStats, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
+import type { BlockedIp, ExamCategory, FromType, HotUrl, KeyPoint, Label, OnlineUserStats, PageResult, PayOrder, PayOrderQuery, PayStatsByDay, RateLimitConfig, ScheduleTask, SearchItem, SuspiciousUser, SystemConfig, TextSimilarityResult, TrafficStats, User, UserQuery, UserStatsByDay, WebTextExtractResult, WebTextLabelResponse } from '../types.ts';
 
 const API_BASE_URL = '/api';
 
@@ -202,7 +202,7 @@ export const PayOrderService = {
         return await res.json();
     },
 
-    async fetch_pay_stats(start_date?: string, end_date?: string): Promise<PayStats> {
+    async fetch_pay_stats(start_date?: string, end_date?: string): Promise<PayStatsByDay[]> {
         const params = new URLSearchParams();
         if (start_date) params.append('start_date', start_date);
         if (end_date) params.append('end_date', end_date);

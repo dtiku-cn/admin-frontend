@@ -30,7 +30,8 @@ const PAGE_SIZE = 10;
 const CHART_COLORS = {
     paidCount: '#52c41a',
     paidAmount: '#1890ff',
-    unpaidUser: '#faad14',
+    pendingCount: '#ff7a45',
+    pendingAmount: '#f759ab',
 } as const;
 
 // 统计颜色配置
@@ -52,7 +53,6 @@ const PayOrderPage: React.FC = () => {
     const [page, setPage] = useState(1);
     const [query, setQuery] = useState<PayOrderQuery>({});
     const [stats, setStats] = useState<PayStatsByDay[]>([]);
-    const [unpaidUserCount, setUnpaidUserCount] = useState(0);
     const [form] = Form.useForm();
     const screens = useBreakpoint();
     
@@ -81,8 +81,7 @@ const PayOrderPage: React.FC = () => {
         
         PayOrderService.fetch_pay_stats(startDate, endDate)
             .then(data => {
-                setStats(data.stats);
-                setUnpaidUserCount(data.unpaid_user_count);
+                setStats(data);
             })
             .catch(console.error);
     }, [dateRange]);
@@ -204,6 +203,8 @@ const PayOrderPage: React.FC = () => {
         const dates = stats.map(s => formatDate(s.day));
         const paidCounts = stats.map(s => s.paid_count);
         const paidAmounts = stats.map(s => centsToYuan(s.paid_amount));
+        const pendingCounts = stats.map(s => s.pending_count);
+        const pendingAmounts = stats.map(s => centsToYuan(s.pending_amount));
 
         return {
             title: { text: '每日付款统计' },
@@ -219,14 +220,14 @@ const PayOrderPage: React.FC = () => {
                     const date = paramArray[0].axisValue;
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     const items = paramArray.map((item: any) => {
-                        const unit = item.seriesName === '付款数量' ? '单' : '元';
+                        const unit = item.seriesName.includes('数量') || item.seriesName.includes('订单') ? '单' : '元';
                         return `${item.marker}${item.seriesName}: ${item.value}${unit}`;
                     }).join('<br/>');
                     return `${date}<br/>${items}`;
                 }
             },
             legend: {
-                data: ['付款数量', '付款金额'],
+                data: ['付款数量', '付款金额', '待付款订单数', '待付款金额'],
                 top: 30,
             },
             grid: {
@@ -244,14 +245,14 @@ const PayOrderPage: React.FC = () => {
             yAxis: [
                 {
                     type: 'value',
-                    name: '付款数量',
+                    name: '订单数量',
                     position: 'left',
                     axisLabel: { formatter: '{value} 单' },
                     splitLine: { show: true }
                 },
                 {
                     type: 'value',
-                    name: '付款金额',
+                    name: '金额',
                     position: 'right',
                     axisLabel: { formatter: '{value} 元' },
                     splitLine: { show: false }
@@ -266,6 +267,13 @@ const PayOrderPage: React.FC = () => {
                     itemStyle: { color: CHART_COLORS.paidAmount },
                 },
                 {
+                    name: '待付款金额',
+                    type: 'bar',
+                    yAxisIndex: 1,
+                    data: pendingAmounts,
+                    itemStyle: { color: CHART_COLORS.pendingAmount },
+                },
+                {
                     name: '付款数量',
                     type: 'line',
                     yAxisIndex: 0,
@@ -274,57 +282,19 @@ const PayOrderPage: React.FC = () => {
                     lineStyle: { color: CHART_COLORS.paidCount },
                     areaStyle: { color: 'rgba(82, 196, 26, 0.1)' },
                 },
-            ],
-        };
-    }, [stats]);
-
-    // 图表配置 - 每日未付款用户数
-    const unpaidUserOption: EChartsOption = useMemo(() => {
-        const dates = stats.map(s => formatDate(s.day));
-        const unpaidCounts = stats.map(s => s.unpaid_user_count);
-
-        return {
-            title: { text: '每日未付款用户数' },
-            tooltip: { 
-                trigger: 'axis',
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                formatter: (params: any) => {
-                    const paramArray = Array.isArray(params) ? params : [params];
-                    const date = paramArray[0].axisValue;
-                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                    const items = paramArray.map((item: any) => {
-                        return `${item.marker}${item.seriesName}: ${item.value}人`;
-                    }).join('<br/>');
-                    return `${date}<br/>${items}`;
-                }
-            },
-            grid: {
-                left: '3%',
-                right: '5%',
-                bottom: '10%',
-                top: '20%',
-                containLabel: true
-            },
-            xAxis: {
-                type: 'category',
-                data: dates,
-            },
-            yAxis: { 
-                type: 'value',
-                axisLabel: { formatter: '{value} 人' }
-            },
-            series: [
                 {
-                    name: '未付款用户',
+                    name: '待付款订单数',
                     type: 'line',
-                    data: unpaidCounts,
+                    yAxisIndex: 0,
+                    data: pendingCounts,
                     smooth: true,
-                    lineStyle: { color: CHART_COLORS.unpaidUser },
-                    areaStyle: { color: '#fffbe6' },
+                    lineStyle: { color: CHART_COLORS.pendingCount },
+                    areaStyle: { color: 'rgba(255, 122, 69, 0.1)' },
                 },
             ],
         };
     }, [stats]);
+
 
     const { todayPaidCount, yesterdayPaidCount, todayPaidAmount, yesterdayPaidAmount } = statsData;
     const countDiff = todayPaidCount - yesterdayPaidCount;
@@ -335,7 +305,7 @@ const PayOrderPage: React.FC = () => {
         <>
             {/* 统计卡片 */}
             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
-                <Col xs={24} sm={12} md={8} lg={6}>
+                <Col xs={24} sm={12} md={8}>
                     <Card>
                         <Statistic 
                             title="订单总数"
@@ -349,7 +319,7 @@ const PayOrderPage: React.FC = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={8} lg={6}>
+                <Col xs={24} sm={12} md={8}>
                     <Card>
                         <Statistic 
                             title="今日付款"
@@ -363,7 +333,7 @@ const PayOrderPage: React.FC = () => {
                         />
                     </Card>
                 </Col>
-                <Col xs={24} sm={12} md={8} lg={6}>
+                <Col xs={24} sm={12} md={8}>
                     <Card>
                         <Statistic 
                             title="今日金额"
@@ -375,16 +345,6 @@ const PayOrderPage: React.FC = () => {
                             }}
                             prefix={amountDiff >= 0 ? <ArrowUpOutlined /> : <ArrowDownOutlined />}
                             suffix="元"
-                        />
-                    </Card>
-                </Col>
-                <Col xs={24} sm={12} md={8} lg={6}>
-                    <Card>
-                        <Statistic 
-                            title="未付款用户"
-                            value={unpaidUserCount}
-                            valueStyle={{ fontSize: valueFontSize, color: STAT_COLORS.warning }}
-                            suffix="人"
                         />
                     </Card>
                 </Col>
@@ -413,22 +373,11 @@ const PayOrderPage: React.FC = () => {
                     />
                 }
             >
-                <Row gutter={[16, 16]}>
-                    <Col xs={24}>
-                        <ReactECharts 
-                            option={paidCombinedOption} 
-                            style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
-                            opts={{ renderer: 'canvas' }}
-                        />
-                    </Col>
-                    <Col xs={24}>
-                        <ReactECharts 
-                            option={unpaidUserOption} 
-                            style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
-                            opts={{ renderer: 'canvas' }}
-                        />
-                    </Col>
-                </Row>
+                <ReactECharts 
+                    option={paidCombinedOption} 
+                    style={{ width: '100%', height: screens.xs ? '300px' : '400px' }}
+                    opts={{ renderer: 'canvas' }}
+                />
             </Card>
             {/* 订单查询与列表 */}
             <Card 

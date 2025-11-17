@@ -193,12 +193,8 @@ export interface PayStatsByDay {
   day: string;
   paid_count: number;
   paid_amount: number;
-  unpaid_user_count: number;
-}
-
-export interface PayStats {
-  stats: PayStatsByDay[];
-  unpaid_user_count: number;
+  pending_count: number;
+  pending_amount: number;
 }
 
 // 实时统计相关类型

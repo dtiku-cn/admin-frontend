@@ -98,6 +98,10 @@ const OnlineUsersPage: React.FC = () => {
                                     cursor: 'pointer',
                                 }}
                                 className="online-user-item"
+                                onClick={() => {
+                                    const clarityUrl = `https://clarity.microsoft.com/projects/view/iar1ra121y/impressions?date=Last%203%20days&CustomUserId=is;u%3A${user.id}`;
+                                    window.open(clarityUrl, '_blank', 'noopener,noreferrer');
+                                }}
                                 >
                                     <Avatar 
                                         src={user.avatar} 
@@ -126,7 +130,7 @@ const OnlineUsersPage: React.FC = () => {
                                             marginTop: 2,
                                         }}
                                     >
-                                        {dayjs(user.modified).format('HH:mm')}
+                                        {dayjs(user.modified).format(screens.xs ? 'HH:mm' : 'MM-DD HH:mm')}
                                     </Text>
                                 </div>
                             </Col>
