@@ -149,3 +149,37 @@ body {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
+
+/* 在线用户头像墙样式 */
+.online-user-item {
+  position: relative;
+}
+
+.online-user-item:hover {
+  background-color: rgba(24, 144, 255, 0.05);
+  transform: translateY(-4px);
+}
+
+.online-user-item:hover .ant-avatar {
+  border-color: #40a9ff !important;
+  box-shadow: 0 4px 12px rgba(24, 144, 255, 0.35) !important;
+}
+
+/* 在线用户头像墙滚动条优化 */
+.online-user-item::-webkit-scrollbar {
+  width: 6px;
+}
+
+.online-user-item::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.online-user-item::-webkit-scrollbar-thumb {
+  background: #bfbfbf;
+  border-radius: 3px;
+}
+
+.online-user-item::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}

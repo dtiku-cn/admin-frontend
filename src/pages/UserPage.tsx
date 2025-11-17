@@ -1,23 +1,23 @@
 // src/pages/UserPage.tsx
-import React, { useEffect, useState } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, Carousel, Avatar, Typography, DatePicker } from 'antd';
+import React, { useEffect, useState, useCallback } from 'react';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, DatePicker } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import ReactECharts from 'echarts-for-react';
 import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { UserService } from '../services/api';
 import { User, UserQuery, OnlineUserStats } from '../types';
 
 const { useBreakpoint } = Grid;
-const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 const pageSize = 10;
 
 const UserPage: React.FC = () => {
     const [searchParams] = useSearchParams();
+    const navigate = useNavigate();
     const [users, setUsers] = useState<User[]>([]);
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(1);
@@ -43,18 +43,18 @@ const UserPage: React.FC = () => {
         }
     }, [searchParams, form]);
 
-    const loadUsers = () => {
+    const loadUsers = useCallback(() => {
         UserService.fetch_users(page, pageSize, query)
             .then(data => {
                 setUsers(data.content);
                 setTotal(data.total_elements);
             })
             .catch(console.error);
-    };
+    }, [page, query]);
 
     useEffect(() => {
         loadUsers();
-    }, [page, query]);
+    }, [loadUsers]);
 
     useEffect(() => {
         const startDate = dateRange[0].format('YYYY-MM-DD');
@@ -117,7 +117,7 @@ const UserPage: React.FC = () => {
         },
     ];
 
-    const onFinish = (values: any) => {
+    const onFinish = (values: { name?: string; expired?: boolean | null }) => {
         const parsedQuery: UserQuery = {
             name: values.name || undefined,
             expired: values.expired ?? undefined,
@@ -157,16 +157,6 @@ const UserPage: React.FC = () => {
     const yesterdayAdd = stats.length > 1 ? stats[stats.length - 2]?.count : 0;
     const fontSize = { fontSize: "1.5em" };
 
-    // 将在线用户分组，每组显示8个
-    const groupOnlineUsers = () => {
-        const groups = [];
-        const itemsPerSlide = screens.xs ? 4 : 8;
-        for (let i = 0; i < onlineStats.online_users.length; i += itemsPerSlide) {
-            groups.push(onlineStats.online_users.slice(i, i + itemsPerSlide));
-        }
-        return groups;
-    };
-
     return (
         <>
             <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
@@ -192,7 +182,11 @@ const UserPage: React.FC = () => {
                     </Card>
                 </Col>
                 <Col xs={24} sm={12} md={12} lg={6}>
-                    <Card>
+                    <Card 
+                        hoverable
+                        onClick={() => navigate('/user/online')}
+                        style={{ cursor: 'pointer' }}
+                    >
                         <Statistic 
                             title="当日实时在线" 
                             value={onlineStats.online_count} 
@@ -212,66 +206,6 @@ const UserPage: React.FC = () => {
                 </Col>
             </Row>
 
-            {onlineStats.online_count > 0 && (
-                <Card 
-                    title="实时在线用户" 
-                    style={{ marginBottom: 24 }}
-                    styles={{ body: { padding: screens.xs ? 12 : 24 } }}
-                >
-                    <Carousel autoplay autoplaySpeed={5000} dots={true}>
-                        {groupOnlineUsers().map((group, groupIndex) => (
-                            <div key={groupIndex}>
-                                <Row gutter={[16, 16]} justify="start">
-                                    {group.map((user) => (
-                                        <Col 
-                                            key={user.id} 
-                                            xs={12} 
-                                            sm={8} 
-                                            md={6} 
-                                            lg={3}
-                                            style={{ textAlign: 'center' }}
-                                        >
-                                            <div style={{ 
-                                                display: 'flex', 
-                                                flexDirection: 'column', 
-                                                alignItems: 'center',
-                                                padding: screens.xs ? 8 : 16,
-                                            }}>
-                                                <Avatar 
-                                                    src={user.avatar} 
-                                                    size={screens.xs ? 48 : 64} 
-                                                    icon={<UserOutlined />}
-                                                    style={{ marginBottom: 8 }}
-                                                />
-                                                <Text 
-                                                    ellipsis={{ tooltip: user.name }}
-                                                    style={{ 
-                                                        maxWidth: '100%',
-                                                        fontSize: screens.xs ? 12 : 14,
-                                                        fontWeight: 500,
-                                                    }}
-                                                >
-                                                    {user.name}
-                                                </Text>
-                                                <Text 
-                                                    type="secondary"
-                                                    style={{ 
-                                                        fontSize: screens.xs ? 10 : 12,
-                                                        marginTop: 4,
-                                                    }}
-                                                >
-                                                    {dayjs(user.modified).format(screens.xs ? 'HH:mm' : 'MM-DD HH:mm')}
-                                                </Text>
-                                            </div>
-                                        </Col>
-                                    ))}
-                                </Row>
-                            </div>
-                        ))}
-                    </Carousel>
-                </Card>
-            )}
-            
             <Card 
                 title="用户增长趋势" 
                 extra={

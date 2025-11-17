@@ -7,6 +7,7 @@ import ScheduleTaskPage from './pages/ScheduleTask';
 import ScheduleTaskDetail from './pages/ScheduleTaskDetail';
 import SystemConfigPage from './pages/SystemConfig';
 import UserPage from './pages/UserPage';
+import OnlineUsersPage from './pages/OnlineUsersPage';
 import PayOrderPage from './pages/PayOrderPage';
 import TextSimilarity from './pages/lab/TextSimilarity';
 import WebTextExtract from './pages/lab/WebTextExtract';
@@ -176,6 +177,7 @@ function App() {
                             <Route path="/schedule/:ty" element={<ScheduleTaskDetail />} />
                             <Route path="/exam-category" element={<ExamCategoryTree />} />
                             <Route path="/user" element={<UserPage />} />
+                            <Route path="/user/online" element={<OnlineUsersPage />} />
                             <Route path="/pay-orders" element={<PayOrderPage />} />
                             <Route path="/materialized-view" element={<MaterializedViewManager />} />
                             <Route path="/test-lab/html-text" element={<HtmlTextExtractor />} />
