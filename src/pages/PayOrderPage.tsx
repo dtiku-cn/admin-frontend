@@ -98,18 +98,20 @@ const PayOrderPage: React.FC = () => {
             dataIndex: 'user_name',
             width: 200,
             render: (userName: string | undefined, record: PayOrder) => (
-                userName ? (
-                    <Link to={`/user?name=${encodeURIComponent(userName)}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <Avatar src={record.user_avatar} size={screens.xs ? 24 : 32}>
-                            {userName.charAt(0)}
-                        </Avatar>
-                        {!screens.xs && <span>{userName}</span>}
-                    </Link>
-                ) : (
-                    <Tooltip title={`用户ID: ${record.user_id}`}>
-                        <span style={{ color: '#999' }}>用户{record.user_id}</span>
-                    </Tooltip>
-                )
+                <Link to={`/user?id=${record.user_id}`} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    {userName ? (
+                        <>
+                            <Avatar src={record.user_avatar} size={screens.xs ? 24 : 32}>
+                                {userName.charAt(0)}
+                            </Avatar>
+                            {!screens.xs && <span>{userName}</span>}
+                        </>
+                    ) : (
+                        <Tooltip title={`用户ID: ${record.user_id}`}>
+                            <span style={{ color: '#999' }}>用户{record.user_id}</span>
+                        </Tooltip>
+                    )}
+                </Link>
             ),
         },
         {

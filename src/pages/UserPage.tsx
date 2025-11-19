@@ -35,11 +35,18 @@ const UserPage: React.FC = () => {
 
     // 从URL参数初始化查询条件
     useEffect(() => {
+        const idParam = searchParams.get('id');
         const nameParam = searchParams.get('name');
-        if (nameParam) {
-            const initialQuery: UserQuery = { name: nameParam };
+        if (idParam || nameParam) {
+            const initialQuery: UserQuery = {
+                id: idParam ? parseInt(idParam) : undefined,
+                name: nameParam || undefined
+            };
             setQuery(initialQuery);
-            form.setFieldsValue({ name: nameParam });
+            form.setFieldsValue({ 
+                id: idParam || undefined,
+                name: nameParam || undefined 
+            });
         }
     }, [searchParams, form]);
 
@@ -117,8 +124,9 @@ const UserPage: React.FC = () => {
         },
     ];
 
-    const onFinish = (values: { name?: string; expired?: boolean | null }) => {
+    const onFinish = (values: { id?: string; name?: string; expired?: boolean | null }) => {
         const parsedQuery: UserQuery = {
+            id: values.id ? parseInt(values.id) : undefined,
             name: values.name || undefined,
             expired: values.expired ?? undefined,
         };
@@ -248,12 +256,17 @@ const UserPage: React.FC = () => {
                     style={{ marginBottom: 16 }}
                 >
                     <Row gutter={[12, 12]}>
-                        <Col xs={24} sm={12} md={8} lg={6}>
+                        <Col xs={24} sm={12} md={6} lg={5}>
+                            <Form.Item name="id" style={{ marginBottom: screens.md ? 0 : undefined }}>
+                                <Input placeholder="用户ID" allowClear />
+                            </Form.Item>
+                        </Col>
+                        <Col xs={24} sm={12} md={6} lg={5}>
                             <Form.Item name="name" style={{ marginBottom: screens.md ? 0 : undefined }}>
                                 <Input placeholder="姓名关键词" allowClear />
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={8} lg={6}>
+                        <Col xs={24} sm={12} md={6} lg={5}>
                             <Form.Item name="expired" initialValue={null} style={{ marginBottom: screens.md ? 0 : undefined }}>
                                 <Select>
                                     <Select.Option value={null}>不限</Select.Option>
@@ -262,7 +275,7 @@ const UserPage: React.FC = () => {
                                 </Select>
                             </Form.Item>
                         </Col>
-                        <Col xs={24} sm={12} md={8} lg={6}>
+                        <Col xs={24} sm={12} md={6} lg={5}>
                             <Button type="primary" htmlType="submit" block={screens.xs}>查询</Button>
                         </Col>
                     </Row>

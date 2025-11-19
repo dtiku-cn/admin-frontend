@@ -107,6 +107,7 @@ export const UserService = {
         const params = new URLSearchParams({
             page: String(page),
             size: String(size),
+            ...(query.id !== undefined ? { id: String(query.id) } : {}),
             ...(query.name ? { name: query.name } : {}),
             ...(query.expired !== undefined ? { expired: String(query.expired) } : {}),
         });

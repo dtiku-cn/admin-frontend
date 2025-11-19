@@ -55,6 +55,7 @@ export interface Label {
 }
 
 export interface UserQuery {
+  id?: number;
   name?: string;
   expired?: boolean;
 }
