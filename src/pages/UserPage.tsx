@@ -1,10 +1,10 @@
 // src/pages/UserPage.tsx
 import React, { useEffect, useState, useCallback } from 'react';
-import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, DatePicker } from 'antd';
+import { Table, Pagination, Card, Form, Row, Col, Input, Select, Button, Statistic, Grid, DatePicker, Modal, message, InputNumber, Space } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import type { Breakpoint } from 'antd/es/_util/responsiveObserver';
 import ReactECharts from 'echarts-for-react';
-import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined } from '@ant-design/icons';
+import { ArrowUpOutlined, ArrowDownOutlined, UserOutlined, ClockCircleOutlined } from '@ant-design/icons';
 import dayjs, { Dayjs } from 'dayjs';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { UserService } from '../services/api';
@@ -26,6 +26,12 @@ const UserPage: React.FC = () => {
     const [onlineStats, setOnlineStats] = useState<OnlineUserStats>({ online_count: 0, online_users: [] });
     const [form] = Form.useForm();
     const screens = useBreakpoint();
+    
+    // 延长过期时间相关状态
+    const [extendModalVisible, setExtendModalVisible] = useState(false);
+    const [selectedUser, setSelectedUser] = useState<User | null>(null);
+    const [extendDays, setExtendDays] = useState<number>(30);
+    const [extending, setExtending] = useState(false);
     
     // 日期范围状态，默认最近30天
     const [dateRange, setDateRange] = useState<[Dayjs, Dayjs]>([
@@ -86,6 +92,35 @@ const UserPage: React.FC = () => {
         return () => clearInterval(interval);
     }, []);
 
+    // 打开延长过期时间的模态框
+    const handleExtendClick = (user: User) => {
+        setSelectedUser(user);
+        setExtendDays(30);
+        setExtendModalVisible(true);
+    };
+
+    // 提交延长过期时间
+    const handleExtendSubmit = async () => {
+        if (!selectedUser || !extendDays || extendDays <= 0) {
+            message.error('请输入有效的延长天数');
+            return;
+        }
+
+        setExtending(true);
+        try {
+            await UserService.extend_user_expiration(selectedUser.id, extendDays);
+            message.success(`成功为用户 ${selectedUser.name} 延长 ${extendDays} 天`);
+            setExtendModalVisible(false);
+            setSelectedUser(null);
+            // 刷新用户列表
+            loadUsers();
+        } catch (error) {
+            message.error(`延长失败: ${error}`);
+        } finally {
+            setExtending(false);
+        }
+    };
+
     const columns: ColumnsType<User> = [
         { 
             title: 'ID', 
@@ -121,6 +156,22 @@ const UserPage: React.FC = () => {
             title: '过期时间',
             dataIndex: 'expired',
             render: (v: string) => dayjs(v).format(screens.lg ? 'YYYY-MM-DD HH:mm' : 'YYYY-MM-DD'),
+        },
+        {
+            title: '操作',
+            key: 'action',
+            width: screens.xs ? 80 : 120,
+            fixed: screens.xs ? 'right' : undefined,
+            render: (_: unknown, record: User) => (
+                <Button 
+                    type="link" 
+                    size="small"
+                    icon={<ClockCircleOutlined />}
+                    onClick={() => handleExtendClick(record)}
+                >
+                    {!screens.xs && '延长时间'}
+                </Button>
+            ),
         },
     ];
 
@@ -297,6 +348,56 @@ const UserPage: React.FC = () => {
                     size={screens.xs ? 'small' : 'default'}
                 />
             </Card>
+
+            {/* 延长过期时间的模态框 */}
+            <Modal
+                title="延长用户过期时间"
+                open={extendModalVisible}
+                onOk={handleExtendSubmit}
+                onCancel={() => {
+                    setExtendModalVisible(false);
+                    setSelectedUser(null);
+                }}
+                confirmLoading={extending}
+                okText="确认延长"
+                cancelText="取消"
+                width={screens.xs ? '90%' : 500}
+            >
+                {selectedUser && (
+                    <Space direction="vertical" style={{ width: '100%' }} size="large">
+                        <div>
+                            <p><strong>用户ID：</strong>{selectedUser.id}</p>
+                            <p><strong>用户名：</strong>{selectedUser.name}</p>
+                            <p><strong>当前过期时间：</strong>{dayjs(selectedUser.expired).format('YYYY-MM-DD HH:mm')}</p>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                            <span>延长天数：</span>
+                            <InputNumber
+                                min={1}
+                                max={3650}
+                                value={extendDays}
+                                onChange={(value) => setExtendDays(value || 30)}
+                                style={{ width: 150 }}
+                                addonAfter="天"
+                            />
+                        </div>
+                        {extendDays > 0 && selectedUser && (
+                            <div style={{ padding: 12, background: '#f0f2f5', borderRadius: 4 }}>
+                                <p style={{ margin: 0, color: '#1890ff' }}>
+                                    <strong>延长后过期时间：</strong>
+                                    {(() => {
+                                        const now = dayjs();
+                                        const expiredTime = dayjs(selectedUser.expired);
+                                        // 如果已过期，从当前时间开始计算；否则在原过期时间基础上延长
+                                        const baseTime = expiredTime.isBefore(now) ? now : expiredTime;
+                                        return baseTime.add(extendDays, 'day').format('YYYY-MM-DD HH:mm');
+                                    })()}
+                                </p>
+                            </div>
+                        )}
+                    </Space>
+                )}
+            </Modal>
         </>
     );
 };

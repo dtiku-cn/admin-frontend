@@ -127,6 +127,16 @@ export const UserService = {
     async fetch_online_users(): Promise<OnlineUserStats> {
         const res = await fetch(`${API_BASE_URL}/online_users`);
         return await res.json();
+    },
+
+    async extend_user_expiration(userId: number, days: number): Promise<User> {
+        const res = await fetch(`${API_BASE_URL}/users/${userId}/extend/${days}`, {
+            method: 'POST',
+        });
+        if (!res.ok) {
+            throw new Error(`延长用户过期时间失败: ${res.statusText}`);
+        }
+        return await res.json();
     }
 }
 
